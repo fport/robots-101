@@ -1,0 +1,2 @@
+strands-robots[sim-mujoco]==0.5.1
+mujoco==3.12.0

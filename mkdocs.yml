@@ -1,0 +1,95 @@
+site_name: SO-101 Atölyesi
+site_description: Robot gelmeden başla. MuJoCo, Strands Robots, LeRobot ve SmolVLA ile Türkçe uygulamalı robotik rehberi.
+site_author: SO-101 Atölyesi
+docs_dir: docs
+site_dir: site
+use_directory_urls: true
+theme:
+  name: material
+  language: tr
+  font: false
+  logo: assets/arm.svg
+  favicon: assets/arm.svg
+  palette:
+    - scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-sunny
+        name: Açık temaya geç
+    - scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-night
+        name: Koyu temaya geç
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.indexes
+    - navigation.top
+    - navigation.footer
+    - content.code.copy
+    - search.suggest
+    - search.highlight
+plugins:
+  - search:
+      lang: [tr, en]
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - footnotes
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.arithmatex:
+      generic: true
+extra_css:
+  - assets/styles.css
+extra_javascript:
+  - assets/lab.js
+nav:
+  - Başla:
+      - Atölye: index.md
+      - Öğrenme rotası: basla/rota.md
+      - Kurulum ve ilk 30 dakika: basla/kurulum.md
+      - Bu rehberin doğrulama durumu: basla/dogrulama.md
+  - Robotik temeli:
+      - SO-101 donanım rehberi: temel/so101.md
+      - Koordinatlar ve kontrol: temel/robotik.md
+      - Yazılım haritası: temel/yigin.md
+      - İnteraktif laboratuvar: temel/laboratuvar.md
+  - Simülasyon:
+      - MuJoCo'yu anlamak: simulasyon/mujoco.md
+      - Strands ile SO-101: simulasyon/strands.md
+      - Sahne, kamera ve hareket: simulasyon/sahne.md
+      - Gösterim üretimi ve kayıt: simulasyon/veri.md
+      - Simülasyondan gerçeğe: simulasyon/sim2real.md
+  - Robot gelince:
+      - İlk açılış ve kalibrasyon: donanim/ilk-acilis.md
+      - Teleoperasyon ve kameralar: donanim/teleop.md
+      - Kaliteli veri toplama: donanim/veri.md
+  - Öğrenme ve VLA:
+      - Taklit öğrenme, ACT ve VLA: ogrenme/temeller.md
+      - LeRobot veri setini okumak: ogrenme/dataset.md
+      - SmolVLA eğitimi: ogrenme/smolvla.md
+      - GPU ve bulut çalışma düzeni: ogrenme/hesaplama.md
+      - Değerlendirme ve çalıştırma: ogrenme/degerlendirme.md
+      - Strands ajanı ile birleştirme: ogrenme/ajan.md
+      - İleri çalışmalar ve RL: ogrenme/ileri.md
+  - Uygulama defteri:
+      - 12 uygulamalı laboratuvar: pratik/lablar.md
+      - Bitirme projesi: pratik/proje.md
+      - Sorun giderme: pratik/sorunlar.md
+      - Komut defteri: pratik/komutlar.md
+      - Sözlük: pratik/sozluk.md
+      - Kaynaklar ve sürümler: kaynaklar.md

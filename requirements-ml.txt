@@ -1,0 +1,3 @@
+# Ayrı Python 3.12 ortamında kur; CUDA wheel seçimini eğitim sayfasından izle.
+-r requirements-sim.txt
+lerobot[feetech,dataset,smolvla]==0.6.1

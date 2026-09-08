@@ -1,0 +1,2 @@
+# Yerel Chrome kurulumu ile scripts/check_site.py için.
+playwright==1.62.0
