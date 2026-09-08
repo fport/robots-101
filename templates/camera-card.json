@@ -1,0 +1,20 @@
+{
+  "camera_feature": "observation.images.front",
+  "device_identity": null,
+  "capture_width": null,
+  "capture_height": null,
+  "capture_fps": null,
+  "focus_mode_and_value": null,
+  "exposure_mode_and_value": null,
+  "mount_reference_image": null,
+  "calibration_date": null,
+  "pattern_inner_corners": null,
+  "pattern_square_size_m": null,
+  "K_at_calibrated_resolution": null,
+  "distortion_model_and_coefficients": null,
+  "T_base_camera": null,
+  "translation_unit": "m",
+  "postprocess_resize_crop_pad_in_order": [],
+  "held_out_reprojection_error_px": null,
+  "notes": "Fill with measurements. Null means unknown, not calibrated."
+}

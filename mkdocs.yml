@@ -61,33 +61,41 @@ nav:
   - Başla:
       - Atölye: index.md
       - Öğrenme rotası: basla/rota.md
+      - Ne kadarını bilmeliyim?: basla/derinlik.md
       - Kurulum ve ilk 30 dakika: basla/kurulum.md
       - Bu rehberin doğrulama durumu: basla/dogrulama.md
   - Robotik temeli:
       - SO-101 donanım rehberi: temel/so101.md
       - Koordinatlar ve kontrol: temel/robotik.md
+      - Kinematik ve ters kinematik: temel/kinematik-ik.md
       - Yazılım haritası: temel/yigin.md
       - İnteraktif laboratuvar: temel/laboratuvar.md
   - Simülasyon:
       - MuJoCo'yu anlamak: simulasyon/mujoco.md
       - Strands ile SO-101: simulasyon/strands.md
       - Sahne, kamera ve hareket: simulasyon/sahne.md
+      - Ölçülen durumla hedef takibi: simulasyon/denetleyici.md
       - Gösterim üretimi ve kayıt: simulasyon/veri.md
       - Simülasyondan gerçeğe: simulasyon/sim2real.md
   - Robot gelince:
       - İlk açılış ve kalibrasyon: donanim/ilk-acilis.md
       - Teleoperasyon ve kameralar: donanim/teleop.md
+      - Kamera geometrisi ve kalibrasyon: donanim/kamera-kalibrasyonu.md
       - Kaliteli veri toplama: donanim/veri.md
   - Öğrenme ve VLA:
       - Taklit öğrenme, ACT ve VLA: ogrenme/temeller.md
       - LeRobot veri setini okumak: ogrenme/dataset.md
+      - Veri mühendisliği ve zaman: ogrenme/veri-muhendisligi.md
       - SmolVLA eğitimi: ogrenme/smolvla.md
+      - SmolVLA'nın iç yapısı: ogrenme/smolvla-ic-yapi.md
+      - Eğitimi deney olarak yürütmek: ogrenme/egitim-deneyleri.md
       - GPU ve bulut çalışma düzeni: ogrenme/hesaplama.md
       - Değerlendirme ve çalıştırma: ogrenme/degerlendirme.md
       - Strands ajanı ile birleştirme: ogrenme/ajan.md
       - İleri çalışmalar ve RL: ogrenme/ileri.md
   - Uygulama defteri:
-      - 12 uygulamalı laboratuvar: pratik/lablar.md
+      - Uygulamalı laboratuvarlar: pratik/lablar.md
+      - 16 çözümlü soru: pratik/cozumlu-sorular.md
       - Bitirme projesi: pratik/proje.md
       - Sorun giderme: pratik/sorunlar.md
       - Komut defteri: pratik/komutlar.md

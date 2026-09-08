@@ -1,4 +1,4 @@
-# 12 uygulamalı laboratuvar
+# 16 uygulamalı laboratuvar
 
 Her deneyde tek soru sor, çıktıyı sakla ve bir cümlelik sonuç yaz. Buradaki “geçti” koşulları atölye ilerlemesi içindir; endüstriyel robot sertifikasyonu değildir.
 
@@ -94,3 +94,36 @@ Gerçek kaliteli veriyle [SmolVLA eğitim](../ogrenme/smolvla.md) tarifindeki 10
 20 önceden belirlenmiş denemeyi kaydet. Başarı ve hata etiketlerini CSV'ye yaz, `06_evaluate_results.py` ile raporla. En büyük hata grubuna yönelik yeni veri/ayar deneyi tasarla.
 
 **Geçiş:** bütün denemeler kayıtlı, checkpoint kimliği sabit, test eğitimde kullanılmadı. İki sürüm arasında aynı koşullarda karşılaştırma yapabiliyorsun.
+
+## Lab 13 · İki IK dalı
+
+```bash
+.venv/bin/python examples/12_planar_ik.py --x 0.22 --y 0.10
+```
+
+**Çıktı:** iki açı çözümü, FK kontrolü ve Jacobian. **Deney:** hedefi `(0.32,0)` ve `(0.40,0)` yap. **Geçiş:** dal birleşmesi, tekillik ve erişim dışı hedefi ayırabiliyorsun. [Çözümlü anlatım](../temel/kinematik-ik.md).
+
+## Lab 14 · SO-101 hedef makinesi
+
+```bash
+.venv/bin/python examples/09_so101_waypoints.py --output outputs/lab14
+```
+
+**Çıktı:** gerçek SO-101 siminde üç aşama, CSV ve başarı raporu. **Deney:** `--timeout 0.1 --output outputs/lab14-timeout` ile başarısızlığı da raporlat. **Geçiş:** ölçülen hata, referans değişimi ve zaman aşımını açıklayabiliyorsun. [Denetleyici bölümü](../simulasyon/denetleyici.md).
+
+## Lab 15 · Episode sınırı ve padding
+
+```bash
+.venv-ml/bin/python examples/10_action_windows.py \
+  data/lab05 --horizon 50 --output outputs/lab15.npz --verify-lerobot
+```
+
+**Çıktı:** 30 frame'lik episode'larda %69 padding; gerçek LeRobot okuyucusuyla sınır karşılaştırması. **Deney:** H=10 ile oranı hesapla ve yeni dosyada doğrula. **Geçiş:** neden sonraki episode'dan hedef alınmadığını ve maskeli loss paydasını anlatabiliyorsun. [Veri mühendisliği](../ogrenme/veri-muhendisligi.md).
+
+## Lab 16 · Flow matching hesabı
+
+```bash
+.venv/bin/python examples/11_flow_matching.py
+```
+
+**Çıktı:** MSE=0.025, dört ideal Euler adımı, doğru maskeli loss=7.5. **Deney:** eylem/gürültü değerlerini kendi kopyanda değiştir, beklediğin sonucu önce elle yaz. **Geçiş:** akış zamanını robot zamanından ve bu aritmetik deneyi gerçek SmolVLA eğitiminden ayırıyorsun. [Modelin iç yapısı](../ogrenme/smolvla-ic-yapi.md).

@@ -1,5 +1,7 @@
 # SmolVLA eğitimi
 
+Komutun içindeki hesapları da anlamak için [modelin iç yapısı ve çözümlü flow matching](smolvla-ic-yapi.md), [veri pencereleri ve padding](veri-muhendisligi.md), [eğitimi kontrollü deney olarak yürütme](egitim-deneyleri.md) bölümlerini birlikte oku.
+
 Bu bölümün hedefi `lerobot/smolvla_base` başlangıç modelini kendi SO-101 gösterimlerine uyarlamak. Robotu henüz bekliyorsan sim smoke verisiyle komut üretimini, hazır kaliteli bir dataset ile eğitim hazırlığını öğrenebilirsin. Gerçek görev başarısı için gösterim kalitesi ve değerlendirme gerekir.
 
 !!! info "Bu bilgisayarda doğrulanan sınır"

@@ -21,6 +21,9 @@ CDN adresinin bir eğitim kılavuzu, marka varlığı veya başka bir kaynak old
 | LeRobot kurulumu | [Installation](https://huggingface.co/docs/lerobot/en/installation) |
 | Teleop/kayıt/eğitim | [Imitation learning](https://huggingface.co/docs/lerobot/en/il_robots) |
 | Kameralar | [Camera guide](https://huggingface.co/docs/lerobot/en/cameras) |
+| Kamera matematiği | [OpenCV kalibrasyon öğreticisi](https://docs.opencv.org/4.13.0/dc/dbb/tutorial_py_calibration.html), [calib3d API](https://docs.opencv.org/4.13.0/d9/d0c/group__calib3d.html) |
+| Sayısal ters kinematik | [Lynch/Park, Modern Robotics 6.2](https://modernrobotics.northwestern.edu/nu-gm-book-resource/6-2-numerical-inverse-kinematics-part-1-of-2/) |
+| Optimizer | [PyTorch AdamW](https://docs.pytorch.org/docs/stable/generated/torch.optim.AdamW.html) |
 | Dataset v3 | [LeRobotDataset v3](https://huggingface.co/docs/lerobot/en/lerobot-dataset-v3) |
 | SmolVLA | [Policy docs](https://huggingface.co/docs/lerobot/en/smolvla), [makale](https://arxiv.org/abs/2506.01844), [model](https://huggingface.co/lerobot/smolvla_base) |
 | Kamera eşleme | [Rename map](https://huggingface.co/docs/lerobot/en/rename_map) |

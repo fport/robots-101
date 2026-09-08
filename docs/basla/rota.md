@@ -1,5 +1,7 @@
 # Öğrenme rotası
 
+İlk on iki uygulama çalışma hattını kurar. Kavramları daha derinden anlamak için [bilgi seviyeleri ve derin okuma rotasını](derinlik.md) izle; yeni IK, denetleyici, action window ve flow matching uygulamaları [laboratuvar defterinin 13–16. deneylerinde](../pratik/lablar.md#lab-13-iki-ik-dal) bulunur. Aşağıdaki 12 kutu başlangıç rotasının ilerlemesidir; bütün uzmanlık konularının puanı değildir.
+
 Hedef her komutu ezberlemek değil; bir hata çıktığında bunun fizik, haberleşme, veri veya model katmanından geldiğini ayırt edebilmek. Aşağıdaki süreler çalışma önerisidir; donanım teslim tarihi veya eğitim süresi tahmini değildir.
 
 ## Dört aşamada ilerle

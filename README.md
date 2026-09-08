@@ -25,6 +25,9 @@ make doctor
 make physics
 make sim
 .venv/bin/python examples/07_toy_behavior_cloning.py
+.venv/bin/python examples/09_so101_waypoints.py
+.venv/bin/python examples/11_flow_matching.py
+.venv/bin/python examples/12_planar_ik.py
 ```
 
 SO-101 varlıkları ilk kullanımda indirilir. Scriptler proje altındaki `.cache/` dizinini kullanır. Sim PNG üretimi OpenGL erişimi ister; macOS pasif viewer için `mjpython` kullanılır.
@@ -40,6 +43,12 @@ uv pip install --python .venv-ml/bin/python -r requirements-ml.txt
 ```
 
 SmolVLA eğitim komutu `05_prepare_training.py` ile dataset metadata'sından üretilir. Ayrıntılar [eğitim sayfasında](docs/ogrenme/smolvla.md).
+
+37 sayfa, 16 laboratuvar ve 16 çözümlü soru içerir. [Derin okuma rotası](docs/basla/derinlik.md): kinematik/IK, ölçülen durumla SO-101 kontrolü, kamera kalibrasyonu, action chunk/padding, SmolVLA flow matching ve kontrollü eğitim deneyleri. Yeni veri deneyi:
+
+```bash
+.venv-ml/bin/python examples/10_action_windows.py data/first-smoke --verify-lerobot
+```
 
 ## Kontroller
 

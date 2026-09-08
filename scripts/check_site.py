@@ -84,8 +84,18 @@ def main():
         assert "1 / 12" in page.locator("#progress-summary").inner_text()
         page.locator("#learning-progress button").click()
         assert not page.locator("#p01").is_checked()
+        page.goto(BASE + "/pratik/cozumlu-sorular/", wait_until="load")
+        assert page.locator("details").count() == 16
+        page.locator("details summary").first.click()
+        assert page.locator("details").first.evaluate("e => e.open")
+        page.goto(BASE + "/ogrenme/smolvla-ic-yapi/", wait_until="load")
+        page.screenshot(path=str(output / "smolvla-deep.png"), full_page=True)
         page.set_viewport_size({"width": 390, "height": 844})
-        for route in ["/", "/temel/laboratuvar/", "/ogrenme/smolvla/"]:
+        for route in ["/", "/temel/laboratuvar/", "/ogrenme/smolvla/",
+                      "/basla/derinlik/", "/temel/kinematik-ik/", "/simulasyon/denetleyici/",
+                      "/donanim/kamera-kalibrasyonu/", "/ogrenme/veri-muhendisligi/",
+                      "/ogrenme/smolvla-ic-yapi/", "/ogrenme/egitim-deneyleri/",
+                      "/pratik/cozumlu-sorular/"]:
             page.goto(BASE + route, wait_until="load")
             assert page.evaluate("document.documentElement.scrollWidth <= innerWidth"), f"Yatay taşma: {route}"
         page.goto(BASE, wait_until="load")
@@ -95,6 +105,7 @@ def main():
     report = {"html_pages_checked": pages, "search_results": search_results,
               "local_links_and_anchors": "pass", "kinematics": "pass", "dataset_calculator": "pass",
               "chunk_calculator": "pass", "theme_toggle": "pass",
+              "worked_solutions_toggle": "pass",
               "progress_persistence": "pass", "mobile_overflow": "pass", "browser_errors": errors}
     (output / "report.json").write_text(json.dumps(report, indent=2))
     print(json.dumps(report, indent=2))
