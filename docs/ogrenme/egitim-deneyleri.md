@@ -1,14 +1,14 @@
 # Eğitimi deney olarak yürütmek
 
-Başlangıç modelini seçip `steps=20000` yazmak deney tasarımı değildir. İyi bir eğitim koşusunda hangi varsayımı sınadığın, neyi sabit tuttuğun, neye göre checkpoint seçeceğin ve sonucu nasıl tekrar üreteceğin açık olmalıdır.
+Başlangıç modelini seçip `steps=20000` yazmak deney tasarımı değildir. İyi bir eğitim (training) koşusunda hangi varsayımı sınadığın, neyi sabit tuttuğun, neye göre kontrol noktası (checkpoint) seçeceğin ve sonucu nasıl tekrar üreteceğin açık olmalıdır.
 
 Bu bölümdeki sayılar çalışma örnekleridir. Donanımında ölçülmüş eğitim süresi/VRAM veya garanti edilen SmolVLA başarısı olarak verilmez. Çalıştırılacak komutlar [eğitim tarifinde](smolvla.md); burada ayarların anlamını ve teşhis sırasını ele alıyoruz.
 
 ## 1. Step, batch ve epoch hesabı
 
-Datasetinde eğitim için 24.000 karar frame'i, batch büyüklüğü 8 ve 20.000 optimizer güncellemesi olduğunu varsay. Tek GPU, bir batch başına bir güncelleme için toplam örnek kullanımı `8×20.000=160.000`; kaba epoch eşdeğeri `160.000/24.000≈6.67` olur.
+Datasetinde eğitim için 24.000 karar kare (frame)'i, örnek grubu (batch) büyüklüğü 8 ve 20.000 eniyileyici (optimizer) güncellemesi olduğunu varsay. Tek GPU, bir batch başına bir güncelleme için toplam örnek kullanımı `8×20.000=160.000`; kaba epoch eşdeğeri `160.000/24.000≈6.67` olur.
 
-Bu, her frame'in tam 6.67 kez kullanıldığı anlamına gelmez. Sampler, drop-last, episode filtreleri ve örnekleme biçimi dağılımı etkiler. Action chunk'ların örtüşmesi nedeniyle toplam etiket yuvası sayısı da bağımsız gösterim sayısı değildir.
+Bu, her frame'in tam 6.67 kez kullanıldığı anlamına gelmez. Sampler, drop-last, bölüm (episode) filtreleri ve örnekleme biçimi dağılımı etkiler. eylem dizisi (action chunk)'ların örtüşmesi nedeniyle toplam etiket yuvası sayısı da bağımsız gösterim (demonstration) sayısı değildir.
 
 Genel effective batch hesabı `B_device × GPU_sayısı × accumulation_adımı`. Bu bir kavram formülüdür; kurulu CLI'nın desteklemediği bir accumulation bayrağını uydurarak ekleme. Mevcut komut üreticisi bu atölyede tek cihaz ve doğrudan batch seçimiyle kullanılıyor.
 
@@ -16,15 +16,15 @@ Genel effective batch hesabı `B_device × GPU_sayısı × accumulation_adımı`
 
 ## 2. Öğrenme oranı ve warmup
 
-Öğrenme oranı, optimizer'ın gradyan bilgisini ağırlık güncellemesine hangi ölçekte çevirdiğini etkiler. Çok büyük seçmek kararsızlık; çok küçük seçmek sınırlı bütçede yavaş uyum gösterebilir. AdamW ayrıca hareketli moment tahminleri ve ayrık weight decay kullanır. [PyTorch AdamW](https://docs.pytorch.org/docs/stable/generated/torch.optim.AdamW.html)
+Öğrenme oranı (learning rate), optimizer'ın gradyan (gradient) bilgisini ağırlık güncellemesine hangi ölçekte çevirdiğini etkiler. Çok büyük seçmek kararsızlık; çok küçük seçmek sınırlı bütçede yavaş uyum gösterebilir. AdamW ayrıca hareketli moment tahminleri ve ayrık weight decay kullanır. [PyTorch AdamW](https://docs.pytorch.org/docs/stable/generated/torch.optim.AdamW.html)
 
-Warmup, koşunun başında öğrenme oranını artıran bölüm; decay sonraki değişim planıdır. Kurulu SmolVLA config'inde varsayılan warmup 1000, decay 30.000 adımdır. Kendi checkpoint config'i ve eğitim logundaki gerçek LR esas alınır. [SmolVLA eğitim ayarları](https://github.com/huggingface/lerobot/blob/2774d9bddcbbda50e697e162e89e7eaada8d7105/src/lerobot/policies/smolvla/configuration_smolvla.py)
+ısınma (Warmup), koşunun başında öğrenme oranını artıran bölüm; decay sonraki değişim planıdır. Kurulu SmolVLA config'inde varsayılan warmup 1000, decay 30.000 adımdır. Kendi checkpoint config'i ve eğitim logundaki gerçek LR esas alınır. [SmolVLA eğitim ayarları](https://github.com/huggingface/lerobot/blob/2774d9bddcbbda50e697e162e89e7eaada8d7105/src/lerobot/policies/smolvla/configuration_smolvla.py)
 
 100 adımlık smoke denemesi bu varsayılanla warmup'ın içinde kalır. Dosya okuma, forward/backward ve checkpoint hattını sınamak için faydalıdır; uzun vadeli model kalitesini o loss eğiminden ilan etme. Öğrenme oranını değiştirirken kullanılan schedule ve toplam adımı da kaydet.
 
 ## 3. VRAM hesabını parçalara ayır
 
-Bellek yalnız model ağırlığı değildir. Ağırlıklar, eğitilen parametrelerin gradyanları, optimizer durumu, aktivasyonlar, giriş görüntüleri ve geçici çalışma alanları birlikte yer kaplar.
+Bellek yalnız model ağırlığı değildir. Ağırlıklar (weights), eğitilen parametrelerin gradyanları (gradients), optimizer durumu, aktivasyonlar, giriş görüntüleri ve geçici çalışma alanları birlikte yer kaplar.
 
 Tamamen örnek bir modelde 100 milyon eğitilen FP32 parametre olsun: ağırlık yaklaşık 400 MB, gradyan yaklaşık 400 MB, Adam'ın iki FP32 momenti yaklaşık 800 MB. Bunlar tek başına yaklaşık **1.6 GB ondalık** eder; aktivasyonlar ve diğer bileşenler eklenmemiştir. Bu sayı SmolVLA'nın ölçülmüş gereksinimi değildir. BF16/mixed precision düzeni ve optimizer uygulaması depolama hesabını değiştirir.
 
@@ -40,10 +40,10 @@ OOM'da önce batch'i küçült; sonra desteklenen precision ve activation checkp
 |---|---|
 | Hipotez | Wrist kamera kapanış anındaki hataları azaltır |
 | Veri sürümü | `pick-v2`, episode listeleri ve birimler kayıtlı |
-| Sabitler | Başlangıç checkpoint'i, görev, train/test grupları, seed, eğitim bütçesi |
+| Sabitler | Başlangıç checkpoint'i, görev, train/test grupları, rastgelelik tohumu (seed), eğitim bütçesi |
 | Değişken | Front'a ek wrist görüntüsü |
 | Ana ölçüt | Önceden tanımlı pick-and-place görev başarısı |
-| Tanı ölçütleri | Kaçırma, düşürme, yanlış bölge, gecikme, training/validation loss |
+| Tanı ölçütleri | Kaçırma, düşürme, yanlış bölge, gecikme (latency), training/doğrulama (validation) loss |
 | Sonuç | Sayım, belirsizlik, başarısız video yolları |
 
 Tek değişken kuralı ilk karşılaştırmaları yorumlamayı kolaylaştırır. Daha ileri deneylerde etkileşimleri birlikte inceleyebilirsin; başlangıçta beş ayarı aynı anda değiştirip iyileşmenin nedenini tahmin etmeye çalışma.
@@ -54,16 +54,16 @@ Tek değişken kuralı ilk karşılaştırmaları yorumlamayı kolaylaştırır.
 |---|---|---|
 | A: Veri okuma | Şema, video, birim, maskeler | İncelenen batch doğru |
 | B: Kısa eğitim | Forward/backward/checkpoint hattı | Sonlu loss ve yüklenebilir çıktı |
-| C: Referans eğitim | İlk görev baseline'ı | Sabit test protokolüyle rollout |
+| C: Referans eğitim | İlk görev karşılaştırma modeli (baseline)'ı | Sabit test protokolüyle politika yürütümü (rollout) |
 | D: Hedefli değişiklik | En büyük hata grubunu azaltmak | C ile aynı koşullarda karşılaştırma |
 
-B koşusunda aynı birkaç örneğe aşırı uyum denemesi de eğitim sinyalinin akıp akmadığını anlamaya yardım edebilir. Bu özellikle veri/etiket hatasını aramak içindir; ezberlenen küçük grubun başarısını genelleme sonucu diye sunma. Base checkpoint'e göre daha iyi olup olmadığını ayrıca ölç.
+B koşusunda aynı birkaç örneğe aşırı uyum (overfitting) denemesi de eğitim sinyalinin akıp akmadığını anlamaya yardım edebilir. Bu özellikle veri/etiket hatasını aramak içindir; ezberlenen küçük grubun başarısını genelleme sonucu diye sunma. Base checkpoint'e göre daha iyi olup olmadığını ayrıca ölç.
 
 ## 6. Loss düşüyor ama robot kötü: inceleme sırası
 
-**Önce sözleşme.** Checkpoint doğru mu, kamera isimleri doğru mu, RGB/BGR doğru mu, action sırası ve birim aynı mı, normalizasyon geri çevriliyor mu? Bunlardan biri bozuksa yeni 20.000 adımlık eğitim yanlış sorunu çözer.
+**Önce sözleşme.** Checkpoint doğru mu, kamera isimleri doğru mu, RGB/BGR doğru mu, action sırası ve birim aynı mı, normalizasyon (normalization) geri çevriliyor mu? Bunlardan biri bozuksa yeni 20.000 adımlık eğitim yanlış sorunu çözer.
 
-**Sonra zaman.** Görüntü yaşı, çıkarım süresi, kontrol hızı ve yürütülen chunk uzunluğunu ölç. Robot nesne yerindeyken doğru yaklaşabiliyor, nesne hareket edince yetişemiyorsa gecikme hipotezi anlamlıdır; bunu sabit/dinamik nesne karşılaştırmasıyla sına.
+**Sonra zaman.** Görüntü yaşı, çıkarım (inference) süresi, kontrol hızı ve yürütülen chunk uzunluğunu ölç. Robot nesne yerindeyken doğru yaklaşabiliyor, nesne hareket edince yetişemiyorsa gecikme hipotezi anlamlıdır; bunu sabit/dinamik nesne karşılaştırmasıyla sına.
 
 **Sonra dağılım.** Eğitim başlangıçlarıyla rollout başlangıçlarını karşılaştır. Küp hep merkezde öğretildiyse masa köşesindeki başarısızlık daha çok training step gerektiğini tek başına göstermez. O bölgede kaliteli gösterim bulunup bulunmadığına bak.
 
@@ -73,10 +73,10 @@ B koşusunda aynı birkaç örneğe aşırı uyum denemesi de eğitim sinyalinin
 
 | Belirti | İlk hipotez | Ayırıcı deney |
 |---|---|---|
-| Kol ilk komutta yanlış yönde | Joint sırası/işaret/birim | Küçük tek eklem komutunu state ile eşle |
+| Kol ilk komutta yanlış yönde | Joint sırası/işaret/birim | Küçük tek eklem (joint) komutunu durum (state) ile eşle |
 | Nesneye geliyor, erken kapatıyor | Görüş veya zamanlama | Kapanış çevresinde kamera/action zamanlarını incele |
 | Tüm başlangıçlarda aynı yere uzanıyor | Konum çeşitliliği yetersiz | Eğitim konumlarını haritala; yeni bölge testi yap |
-| Başarılı kavrıyor, taşırken düşürüyor | Taşıma gösterimi/temas/komut değişimi | Kaldırma ve taşıma aşamalarını ayrı puanla |
+| Başarılı kavrıyor, taşırken düşürüyor | Taşıma gösterimi/temas (contact)/komut değişimi | Kaldırma ve taşıma aşamalarını ayrı puanla |
 | Simde iyi, gerçek kolda kötü | Birim, dinamik veya görüntü farkı | Önce state/action sözleşmesi, sonra görsel/dinamik farkları ayrı dene |
 | Validation çok iyi, yeni günde kötü | Veri sızıntısı veya gün değişimi | Gün bazlı bağımsız test oluştur |
 | Loss birden NaN | Veri/ölçek/nümerik sorun | İlk bozuk batch'i sakla; finite ve aralık kontrolü yap |

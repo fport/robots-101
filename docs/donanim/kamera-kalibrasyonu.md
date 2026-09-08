@@ -6,10 +6,10 @@ VLA'nın görüntü kullanması, bütün piksel hatalarının eğitimde kendili�
 
 | İş | Ne eşler? | Çıktı örneği |
 |---|---|---|
-| Servo kalibrasyonu | Motor okuması ↔ eklem referansı/aralığı | Motorlara ait offset ve sınırlar |
+| Servo kalibrasyonu | Motor okuması ↔ eklem (joint) referansı/aralığı | Motorlara ait offset ve sınırlar |
 | Kamera iç kalibrasyonu | Kamera içindeki 3B ışın ↔ piksel | `K`, distorsiyon katsayıları |
-| Kamera dış kalibrasyonu | Kamera frame'i ↔ robot/masa frame'i | `R`, `t` veya `T` |
-| Öğrenme normalizasyonu | Dataset değerleri ↔ modelin sayısal ölçeği | Ortalama, standart sapma |
+| Kamera dış kalibrasyonu | Kamera kare (frame)'i ↔ robot/masa frame'i | `R`, `t` veya `T` |
+| Öğrenme normalizasyonu | veri kümesi (Dataset) değerleri ↔ modelin sayısal ölçeği | Ortalama, standart sapma |
 
 Kamera matrisi bulmak motorların doğru yönde döndüğünü kanıtlamaz. Model normalizasyonu da kamera koordinatını robot koordinatına dönüştürmez.
 
@@ -26,7 +26,7 @@ K = [ fx   0  cx ]
     [  0   0   1 ]
 ```
 
-`fx, fy` piksel ölçeğinde odak parametreleri; `cx, cy` ana nokta koordinatıdır. Gerçek lens distorsiyonu ayrıca modellenir. OpenCV'nin kalibrasyon işlevleri bilinen hedef noktaları ile görüntü noktalarından bu parametreleri kestirir. [OpenCV kamera modeli](https://docs.opencv.org/4.13.0/d9/d0c/group__calib3d.html)
+`fx, fy` piksel ölçeğinde odak parametreleri; `cx, cy` ana nokta koordinatıdır. Gerçek lens distorsiyonu ayrıca modellenir. OpenCV'nin kalibrasyon (calibration) işlevleri bilinen hedef noktaları ile görüntü noktalarından bu parametreleri kestirir. [OpenCV kamera modeli](https://docs.opencv.org/4.13.0/d9/d0c/group__calib3d.html)
 
 **Hesap örneği:** `fx=fy=600`, `cx=320`, `cy=240`, nokta `(0.05, −0.02, 0.50)` m olsun. `u=380`, `v=216` piksel çıkar. Aynı ışında `(0.10, −0.04, 1.00)` m noktası da aynı piksele düşer. Tek RGB pikselinden hangi derinlikte olduğunu bu modelle bilemezsin.
 
@@ -65,7 +65,7 @@ fx'=300, fy'=300, cx'=160, cy'=120
 (380,216) → (190,108)
 ```
 
-Sonra soldan 40, üstten 20 piksel kırparsan yeni ana nokta `(120,100)` olur. Önce kırpıp sonra küçültmek farklı sayı verir; işlem sırası kaydedilmelidir. Model kare görüntü isterken boşluk ekliyorsan, eklenen sol/üst padding de ana noktaya eklenir.
+Sonra soldan 40, üstten 20 piksel kırparsan yeni ana nokta `(120,100)` olur. Önce kırpıp sonra küçültmek farklı sayı verir; işlem sırası kaydedilmelidir. Model kare görüntü isterken boşluk ekliyorsan, eklenen sol/üst doldurma (padding) de ana noktaya eklenir.
 
 Genel, saf resize → crop → pad hesabı:
 
@@ -87,7 +87,7 @@ T_base_camera(q) = T_base_wrist(q) × T_wrist_camera
 
 Robot hareketlerini ve kalibrasyon hedefi gözlemlerini birlikte kullanarak kamera-robot bağlantısını kestirmek hand-eye kalibrasyon problemidir. OpenCV bu problem için `calibrateHandEye` sunar; giriş/çıkış dönüşüm yönleri API sözleşmesinden kontrol edilmelidir. [Hand-eye API](https://docs.opencv.org/4.13.0/d9/d0c/group__calib3d.html#gaebfc1c10372d17a83f7a3296b952c86b)
 
-Pratikte ilk iş, iki kamera adını sabitlemek ve sahnedeki rollerini kaydetmektir: `front` çalışma alanını, `wrist` yaklaşma/kapanışı görsün. Gösterim sırasında wrist görüntüsü sürekli tutucu tarafından kapanıyorsa eğitime daha çok aynı kareyi eklemek görünmeyen nesneyi görünür yapmaz.
+Pratikte ilk iş, iki kamera adını sabitlemek ve sahnedeki rollerini kaydetmektir: `front` çalışma alanını, `wrist` yaklaşma/kapanışı görsün. Gösterim (demonstration) sırasında wrist görüntüsü sürekli tutucu (gripper) tarafından kapanıyorsa eğitime daha çok aynı kareyi eklemek görünmeyen nesneyi görünür yapmaz.
 
 ## 8. VLA için mutlaka geometrik kalibrasyon gerekir mi?
 

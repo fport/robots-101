@@ -1,34 +1,34 @@
 # Bitirme projesi: küpten kaba
 
-Bu projenin çıktısı bir başarılı video ve açıklanabilir bir deney raporudur. Eğitim, veri ve değerlendirme dosyaları birbirine bağlanır; başka gün aynı denemeyi tekrar kurabilirsin.
+Bu projenin çıktısı bir başarılı video ve açıklanabilir bir deney raporudur. Eğitim (training), veri ve değerlendirme dosyaları birbirine bağlanır; başka gün aynı denemeyi tekrar kurabilirsin.
 
 ## Proje tanımı
 
-**Görev:** tek kırmızı küpü çalışma alanından al, belirli kaba bırak. **Ortam:** sabit masa ve kamera düzeni. **Başlangıç varyasyonu:** beş küçük bölge. **Başarı:** küp kap içinde kalır, tutucu geri çekilir ve süre sınırı aşılmaz. **Başarısızlık etiketleri:** `approach_miss`, `grasp_miss`, `drop`, `place_miss`, `timeout`, `system_error`.
+**Görev:** tek kırmızı küpü çalışma alanından al, belirli kaba bırak. **Ortam:** sabit masa ve kamera düzeni. **Başlangıç varyasyonu:** beş küçük bölge. **Başarı:** küp kap içinde kalır, tutucu (gripper) geri çekilir ve süre sınırı aşılmaz. **Başarısızlık etiketleri:** `approach_miss`, `grasp_miss`, `drop`, `place_miss`, `timeout`, `system_error`.
 
-Bu etiketler örnek taksonomidir. Senin görevinde “sistem hatası” ile “politika yanlış davranışı”nı ayrı raporlamak yararlıdır. Bir USB kopmasını gizleyerek değerlendirme sayısından silme; protokolünü baştan tanımla.
+Bu etiketler örnek taksonomidir. Senin görevinde “sistem hatası” ile “politika (policy) yanlış davranışı”nı ayrı raporlamak yararlıdır. Bir USB kopmasını gizleyerek değerlendirme sayısından silme; protokolünü baştan tanımla.
 
 ## Aşama A · Robot gelmeden
 
-Kurulumu tamamla, MuJoCo hedef takip deneyini ve SO-101 görüntüsünü üret. Üç sim episode kaydet, parquet denetimini ve video okumayı çalıştır. Tarayıcıdaki veri planlayıcıyla pilot/ana veri süresini hesapla.
+Kurulumu tamamla, MuJoCo hedef takip deneyini ve SO-101 görüntüsünü üret. Üç sim bölüm (episode) kaydet, parquet denetimini ve video okumayı çalıştır. Tarayıcıdaki veri planlayıcıyla pilot/ana veri süresini hesapla.
 
-**Teslim:** `doctor` çıktısı, iki sim PNG, dataset denetim raporu, bir decode edilmiş frame. Bu aşamanın sonucu çalışan altyapıdır; kavrama politikası değildir.
+**Teslim:** `doctor` çıktısı, iki sim PNG, veri kümesi (dataset) denetim raporu, bir decode edilmiş kare (frame). Bu aşamanın sonucu çalışan altyapıdır; kavrama politikası değildir.
 
 ## Aşama B · Gerçek pilot
 
-Cihaz kartı ve kalibrasyonu tamamla. Kameralardan bakarak beş pilot gösterim yap. Görüntü, reset, görev metni ve birim sorunlarını düzelt.
+Cihaz kartı ve kalibrasyonu tamamla. Kameralardan bakarak beş pilot gösterim (demonstration) yap. Görüntü, reset, görev metni ve birim sorunlarını düzelt.
 
-**Teslim:** beş okunabilir episode, kamera yerleşim fotoğrafı/notu, kayıt komutu ve kalibrasyon ID'leri.
+**Teslim:** beş okunabilir episode, kamera yerleşim fotoğrafı/notu, kayıt komutu ve kalibrasyon (calibration) ID'leri.
 
 ## Aşama C · Dataset v1
 
-Başlangıç bölgelerinden dengeli gösterimler topla. Başarısız denemeleri etiketle/ayır. Episode bazlı validation ayır; son test için kullanılacak koşulları ayrı not et. Aynı hareketin karelerini rastgele iki tarafa dağıtma.
+Başlangıç bölgelerinden dengeli gösterimler (demonstrations) topla. Başarısız denemeleri etiketle/ayır. Episode bazlı doğrulama (validation) ayır; son test için kullanılacak koşulları ayrı not et. Aynı hareketin karelerini rastgele iki tarafa dağıtma.
 
 **Teslim:** veri kökü/revision, kalite raporu, split açıklaması ve görev sözleşmesi.
 
 ## Aşama D · İki öğrenme deneyi
 
-Aynı veri üzerinde ACT baseline ve SmolVLA fine-tuning hazırla. İkisinde de önce smoke koşusu yap. Hyperparametre, toplam süre, tepe bellek ve checkpoint adımlarını kaydet.
+Aynı veri üzerinde ACT karşılaştırma modeli (baseline) ve SmolVLA ince ayar (fine-tuning) hazırla. İkisinde de önce smoke koşusu yap. Hyperparametre, toplam süre, tepe bellek ve kontrol noktası (checkpoint) adımlarını kaydet.
 
 **Teslim:** loss kayıtları, processor'larıyla birlikte checkpoint ve eğitim komutları. Aynı adım sayısının farklı modeller için farklı hesaplama harcaması olduğunu raporda belirt.
 

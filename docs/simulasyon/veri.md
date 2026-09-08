@@ -1,13 +1,13 @@
 # Gösterim üretimi ve kayıt
 
-Simülasyon verisi robot beklerken kayıt/eğitim yazılımını öğrenmeni sağlar. Ama öğrenilecek davranışın kalitesi, kayıt kaynağına bağlıdır: rastgele hareket, kural tabanlı uzman ve insan gösterimi birbirinden farklı öğretmenlerdir.
+Simülasyon (simulation) verisi robot beklerken kayıt/eğitim (training) yazılımını öğrenmeni sağlar. Ama öğrenilecek davranışın kalitesi, kayıt kaynağına bağlıdır: rastgele hareket, kural tabanlı uzman ve insan gösterimi birbirinden farklı öğretmenlerdir.
 
 ## Üç veri türünü ayır
 
 | Kaynak | Ne için kullanılır? | Sınırlama |
 |---|---|---|
-| Mock/rastgele hareket | Şema, video, episode sınırı, dosya hattı deneyi | Başarılı görev davranışı öğretmez |
-| Scripted/IK uzman | Tanımlı görevde kontrollü gösterimler | Temas ve başarı ölçütü gerçekten doğrulanmalı |
+| Mock/rastgele hareket | Şema, video, bölüm (episode) sınırı, dosya hattı deneyi | Başarılı görev davranışı öğretmez |
+| Scripted/IK uzman | Tanımlı görevde kontrollü gösterimler (demonstrations) | Temas (contact) ve başarı ölçütü gerçekten doğrulanmalı |
 | İnsan teleoperasyonu | Görev çözme davranışını örneklemek | Operatör kalitesi ve kayıt düzeni önemlidir |
 
 Robot yokken ilkini çalıştır; sonra güvenilir bir uzman veya hazır kaliteli veriyle eğitim alıştırmasına geç. Görsel olarak güzel bir hareketi “uzman” diye etiketlemek yeterli değildir.
@@ -25,13 +25,13 @@ Robot yokken ilkini çalıştır; sonra güvenilir bir uzman veya hazır kalitel
 .venv-ml/bin/python examples/03_record_sim.py --root data/sim-smoke-02 --episodes 4 --steps 60
 ```
 
-`ATOLYE_README.json` verinin mock kaynaklı ve yalnız veri hattını sınamak için olduğunu kaydeder. Bunu bir kavrama başarı veri seti diye yorumlama.
+`ATOLYE_README.json` verinin mock kaynaklı ve yalnız veri hattını sınamak için olduğunu kaydeder. Bunu bir kavrama başarı veri seti (dataset) diye yorumlama.
 
 ## Episode sınırı neden önemli?
 
-Üç gösterimi arka arkaya çalıştırıp yalnız en sonda diske yazarsan tek uzun episode elde edebilirsin. Bu, reset noktasındaki ani konum değişimini bir görev eylemi gibi gösterebilir. Script her rollout sonunda `save_episode()` çağırır; en sonda `stop_recording()` ile dosyaları sonlandırır.
+Üç gösterimi arka arkaya çalıştırıp yalnız en sonda diske yazarsan tek uzun episode elde edebilirsin. Bu, reset noktasındaki ani konum değişimini bir görev eylemi gibi gösterebilir. Script her politika yürütümü (rollout) sonunda `save_episode()` çağırır; en sonda `stop_recording()` ile dosyaları sonlandırır.
 
-Denetim gerçek parquet içindeki episode/frame kayıtlarını sayar. Beklenen üç episode yerine tek episode varsa, terminalde “3 deneme tamamlandı” yazması veri bütünlüğünü kurtarmaz. [Strands kayıt API'si ve episode sınırları](https://github.com/strands-labs/robots/blob/main/docs/recording.md)
+Denetim gerçek parquet içindeki episode/kare (frame) kayıtlarını sayar. Beklenen üç episode yerine tek episode varsa, terminalde “3 deneme tamamlandı” yazması veri bütünlüğünü kurtarmaz. [Strands kayıt API'si ve episode sınırları](https://github.com/strands-labs/robots/blob/main/docs/recording.md)
 
 ## Kayıt FPS ve fizik zamanı
 
@@ -43,12 +43,12 @@ Bu makinedeki 30 adımlık SO-101 denemesinde raporlanan sim zamanı yaklaşık 
 
 Parquet denetimi bütün video karelerini decode etmez. `meta/info.json` içindeki kamera anahtarları ile video dosyalarının bulunduğunu doğrula; bir episode'u baştan sona izle. Donmuş görüntü, yanlış kamera ve geç gelen frame, sayısal olarak temiz bir dataset içinde saklanabilir.
 
-Kayıt sırasında video encoder hatası varsa önce küçük bir denemeyi düzelt. Saatlerce gösterim toplayıp en sonda dosyaların açılmadığını öğrenmek yerine 3 kısa episode ile uçtan uca okuma yap.
+Kayıt sırasında video encoder hatası varsa önce küçük bir denemeyi düzelt. Saatlerce gösterim (demonstration) toplayıp en sonda dosyaların açılmadığını öğrenmek yerine 3 kısa episode ile uçtan uca okuma yap.
 
 ## VLA için sim veriyi nasıl ilerletirsin?
 
-Önce görev sabit olsun: aynı nesne, tek hedef bölgesi, sınırlı başlangıç varyasyonu. Uzman denetleyiciyi çoklu seed ile çalıştır; başarılı/başarısız sonuçları ayrı tut. Yalnız başarılı gösterimlerle ilk BC baseline'ını eğit. Testte görülmemiş başlangıçlar kullan.
+Önce görev sabit olsun: aynı nesne, tek hedef bölgesi, sınırlı başlangıç varyasyonu. Uzman denetleyiciyi çoklu rastgelelik tohumu (seed) ile çalıştır; başarılı/başarısız sonuçları ayrı tut. Yalnız başarılı gösterimlerle ilk BC karşılaştırma modeli (baseline)'ını eğit. Testte görülmemiş başlangıçlar kullan.
 
-Sonra tek tek ışık, renk, nesne konumu ve sürtünme değiştir. Görüntü augmentasyonu eylem etiketini değiştirmemeli. Nesneyi görselde başka yere taşıyıp action'ı aynı bırakmak çoğu görevde fiziksel olarak yanlış eğitim çifti yaratır.
+Sonra tek tek ışık, renk, nesne konumu ve sürtünme (friction) değiştir. Görüntü augmentasyonu eylem (action) etiketini değiştirmemeli. Nesneyi görselde başka yere taşıyıp action'ı aynı bırakmak çoğu görevde fiziksel olarak yanlış eğitim çifti yaratır.
 
 Tam SmolVLA hattı [eğitim bölümünde](../ogrenme/smolvla.md). O komuta mock veriyi vermek teknik bir eğitim denemesi olabilir; başarı iddiası üretmez.

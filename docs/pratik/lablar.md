@@ -1,6 +1,8 @@
-# 16 uygulamalı laboratuvar
+# 22 uygulamalı laboratuvar
 
 Her deneyde tek soru sor, çıktıyı sakla ve bir cümlelik sonuç yaz. Buradaki “geçti” koşulları atölye ilerlemesi içindir; endüstriyel robot sertifikasyonu değildir.
+
+Yeni başlıyorsan 17–19 numaralı fizik deneylerini robot özelindeki çalışmalardan önce yapabilirsin. Numaralar tamamlanma sırası zorunluluğu değildir; [başlangıç rotası](../basla/sifirdan.md) ilk oturumlarını önerir.
 
 ## Lab 01 · Ortamını tanı
 
@@ -33,7 +35,7 @@ Her deneyde tek soru sor, çıktıyı sakla ve bir cümlelik sonuç yaz. Buradak
 .venv/bin/python examples/02_strands_so101.py --render
 ```
 
-**Çıktı:** başlangıç/son PNG ve altı eklem state'i. **Deney:** küp rengini değiştir, kamera konumunu değiştir; hangi değişikliğin sadece gözlemi etkilediğini incele. **Geçiş:** görüntüyü kendin ürettin ve mock'un görev uzmanı olmadığını açıklayabiliyorsun.
+**Çıktı:** başlangıç/son PNG ve altı eklem (joint) state'i. **Deney:** küp rengini değiştir, kamera konumunu değiştir; hangi değişikliğin sadece gözlemi etkilediğini incele. **Geçiş:** görüntüyü kendin ürettin ve mock'un görev uzmanı olmadığını açıklayabiliyorsun.
 
 ## Lab 05 · Dataset oluştur
 
@@ -50,7 +52,7 @@ Her deneyde tek soru sor, çıktıyı sakla ve bir cümlelik sonuç yaz. Buradak
 .venv-ml/bin/python examples/08_read_dataset.py --root data/lab05 --repo-id local/sim-smoke --index 15
 ```
 
-**Çıktı:** `outputs/dataset_frame_15_front.png`, `3×256×256` tensör şekli. **Deney:** ilk ve son frame'i ayrı oku. **Geçiş:** videonun decode edildiğini, şemanın varlığından ayrı doğruladın.
+**Çıktı:** `outputs/dataset_frame_15_front.png`, `3×256×256` tensör (tensor) şekli. **Deney:** ilk ve son kare (frame)'i ayrı oku. **Geçiş:** videonun decode edildiğini, şemanın varlığından ayrı doğruladın.
 
 ## Lab 07 · Küçük modeli eğit
 
@@ -58,19 +60,19 @@ Her deneyde tek soru sor, çıktıyı sakla ve bir cümlelik sonuç yaz. Buradak
 .venv/bin/python examples/07_toy_behavior_cloning.py --output outputs/lab07
 ```
 
-**Çıktı:** loss, ağırlıklar ve ayrı testte uç hatası. **Deney:** yeni çıktı klasöründe `--steps 100` ile kısa eğitim yap ve 2000 adımla karşılaştır. **Geçiş:** held-out hata, sabit baseline ve training loss'un farklı ölçüler olduğunu açıklayabiliyorsun. Bu model VLA değildir.
+**Çıktı:** loss, ağırlıklar (weights) ve ayrı testte uç hatası. **Deney:** yeni çıktı klasöründe `--steps 100` ile kısa eğitim (training) yap ve 2000 adımla karşılaştır. **Geçiş:** held-out hata, sabit baseline ve training loss'un farklı ölçüler olduğunu açıklayabiliyorsun. Bu model VLA değildir.
 
 ## Lab 08 · Donanım ve teleop
 
 Robot geldikten sonra [ilk açılış](../donanim/ilk-acilis.md) ve [teleop](../donanim/teleop.md) adımlarını uygula.
 
-**Çıktı:** cihaz kartı, kalibrasyon kaydı, kamera eşlemesi. **Geçiş:** küçük hareketlerde beklenen eklem/yön, tutucu açılışı ve durdurma yolu doğrulandı. Donanım gelmeden bu lab tamamlanmış sayılmaz.
+**Çıktı:** cihaz kartı, kalibrasyon (calibration) kaydı, kamera eşlemesi. **Geçiş:** küçük hareketlerde beklenen eklem/yön, tutucu (gripper) açılışı ve durdurma yolu doğrulandı. Donanım gelmeden bu lab tamamlanmış sayılmaz.
 
 ## Lab 09 · Beş pilot gösterim
 
 [Gerçek veri toplama](../donanim/veri.md) komutunu beş episode için çalıştır. Her videoyu izle. En az bir kalite problemini bulabilirsen eğitimden önce düzelt.
 
-**Geçiş:** görev başlangıcı/sonu, kamera görünürlüğü ve action birimi kayıtlı. Beş pilot model başarısı için yeterlilik iddiası değildir.
+**Geçiş:** görev başlangıcı/sonu, kamera görünürlüğü ve eylem (action) birimi kayıtlı. Beş pilot model başarısı için yeterlilik iddiası değildir.
 
 ## Lab 10 · Eğitim komutunu hazırla
 
@@ -81,11 +83,11 @@ Robot geldikten sonra [ilk açılış](../donanim/ilk-acilis.md) ve [teleop](../
   --batch-size 1 --device cpu --eval-split 0
 ```
 
-**Çıktı:** çalıştırılmamış SmolVLA komutu. **Deney:** üretilen `policy.input_features` alanını dataset metadata'sıyla karşılaştır. **Geçiş:** olmayan kamera girişi yok. Mock veriyle kısa eğitim ancak hat üzerinden geçiş deneyidir; gerçek göreve dair sonuç çıkarma.
+**Çıktı:** çalıştırılmamış SmolVLA komutu. **Deney:** üretilen `policy.input_features` alanını veri kümesi (dataset) metadata'sıyla karşılaştır. **Geçiş:** olmayan kamera girişi yok. Mock veriyle kısa eğitim ancak hat üzerinden geçiş deneyidir; gerçek göreve dair sonuç çıkarma.
 
 ## Lab 11 · GPU'da smoke + fine-tuning
 
-Gerçek kaliteli veriyle [SmolVLA eğitim](../ogrenme/smolvla.md) tarifindeki 100 adımlık koşuyu bitir; checkpoint dosyalarını doğrula. Sonra ayrı output ile uzun koşu başlat. GPU yoksa önce bu makineyi/oturumu hazırlaman gerekir.
+Gerçek kaliteli veriyle [SmolVLA eğitim](../ogrenme/smolvla.md) tarifindeki 100 adımlık koşuyu bitir; kontrol noktası (checkpoint) dosyalarını doğrula. Sonra ayrı output ile uzun koşu başlat. GPU yoksa önce bu makineyi/oturumu hazırlaman gerekir.
 
 **Geçiş:** loss sonlu, veri okunuyor, checkpoint kaydediliyor, deney sürümleniyor. Uzun eğitimin bitmesi görev testini tamamlamaz.
 
@@ -118,7 +120,7 @@ Gerçek kaliteli veriyle [SmolVLA eğitim](../ogrenme/smolvla.md) tarifindeki 10
   data/lab05 --horizon 50 --output outputs/lab15.npz --verify-lerobot
 ```
 
-**Çıktı:** 30 frame'lik episode'larda %69 padding; gerçek LeRobot okuyucusuyla sınır karşılaştırması. **Deney:** H=10 ile oranı hesapla ve yeni dosyada doğrula. **Geçiş:** neden sonraki episode'dan hedef alınmadığını ve maskeli loss paydasını anlatabiliyorsun. [Veri mühendisliği](../ogrenme/veri-muhendisligi.md).
+**Çıktı:** 30 frame'lik episode'larda %69 doldurma (padding); gerçek LeRobot okuyucusuyla sınır karşılaştırması. **Deney:** H=10 ile oranı hesapla ve yeni dosyada doğrula. **Geçiş:** neden sonraki episode'dan hedef alınmadığını ve maskeli loss paydasını anlatabiliyorsun. [Veri mühendisliği](../ogrenme/veri-muhendisligi.md).
 
 ## Lab 16 · Flow matching hesabı
 
@@ -127,3 +129,55 @@ Gerçek kaliteli veriyle [SmolVLA eğitim](../ogrenme/smolvla.md) tarifindeki 10
 ```
 
 **Çıktı:** MSE=0.025, dört ideal Euler adımı, doğru maskeli loss=7.5. **Deney:** eylem/gürültü değerlerini kendi kopyanda değiştir, beklediğin sonucu önce elle yaz. **Geçiş:** akış zamanını robot zamanından ve bu aritmetik deneyi gerçek SmolVLA eğitiminden ayırıyorsun. [Modelin iç yapısı](../ogrenme/smolvla-ic-yapi.md).
+
+## Lab 17 · Fizik dünyanı kur
+
+```bash
+.venv/bin/python examples/13_mujoco_playground.py --scene drop --output outputs/lab17
+.venv/bin/python examples/13_mujoco_playground.py --scene drop --gravity 0 --output outputs/lab17-zero
+```
+
+**Çıktı:** küpün son yüksekliği ve temas (contact) sayısı. **Deney:** yerçekimini (gravity) kaldırınca başlangıçta hareketsiz küpün neden havada kaldığını açıkla. **Geçiş:** model (model), durum (state) ve serbest eklem (free joint) arasındaki ilişkiyi anlatabiliyorsun. [Sıfırdan simülasyon](../simulasyon/sifirdan.md).
+
+## Lab 18 · Sürtünmeyi ölç
+
+```bash
+.venv/bin/python examples/13_mujoco_playground.py --scene slide --friction 0.1 --output outputs/lab18-low
+.venv/bin/python examples/13_mujoco_playground.py --scene slide --friction 1 --output outputs/lab18-high
+```
+
+**Deney:** önce hangisinin daha uzağa kayacağını tahmin et, sonra yatay yer değiştirmeyi (displacement) karşılaştır. **Geçiş:** başlangıç hızı, süre ve yerçekimini sabit tutmanın neden gerekli olduğunu açıklayabiliyorsun. [On deneyin tamamı](../simulasyon/deneyler.md).
+
+## Lab 19 · Servo, gözlem ve sıfırlama
+
+```bash
+.venv/bin/python examples/13_mujoco_playground.py --scene servo --target 0.7 --render --output outputs/lab19
+```
+
+**Çıktı:** açı takibi, RGB görüntüsü, metrik derinlik (metric depth) ve sıfırlama (reset) raporu. **Geçiş:** görüntü üretmenin (rendering) zamanı ilerletmediğini, durumu sıfırlamanın modelin yerçekimi ayarını geri almadığını anlatabiliyorsun. Görüntü için grafik erişimi gerekir.
+
+## Lab 20 · Hazır veri kümesini incele
+
+```bash
+.venv-ml/bin/python examples/14_hub_dataset.py lerobot/svla_so100_pickplace
+```
+
+**Çıktı:** sürüm (revision), toplam boyut, robot türü, kamera ve eylem adları. [Hub bölümündeki](../ogrenme/huggingface.md) sabit sürüm ve boyut sınırıyla indir, denetle, görüntüsünü aç. **Geçiş:** SO-100 verisinin neden otomatik SO-101 verisi olmadığını açıklayabiliyorsun.
+
+## Lab 21 · Fizikte ilk öğrenmen
+
+```bash
+.venv-ml/bin/python examples/15_first_learning.py --output outputs/lab21
+```
+
+**Çıktı:** 40 bölüm (episode), eğitim/doğrulama/test ayrımı (train/validation/test split), kayıp (loss) ve altı test denemesi. **Geçiş:** öğretmen eylemi, yalnız eğitimden hesaplanan istatistikler, eniyileyici (optimizer) güncellemesi ve sabit başlangıç karşılaştırmasını (baseline) anlatabiliyorsun. [İlk öğrenme döngüsü](../ogrenme/ilk-ogrenme.md).
+
+## Lab 22 · LeRobot verisini kendin üret
+
+```bash
+.venv-ml/bin/python examples/16_create_lerobot_dataset.py \
+  outputs/lab21/demonstrations.csv --root data/lab22
+.venv-ml/bin/python examples/04_inspect_dataset.py data/lab22 --expected-episodes 40
+```
+
+**Çıktı:** üstveri (metadata) ve `ATOLYE_CARD.json`. **Geçiş:** iki gözlem (observation) değeri, bir eylem, radyan birimi ve kamera yokluğunu açıklayabiliyorsun. Geçerli sayısal veri, görsel SmolVLA tarifinin altı eylemli veri sözleşmesini karşılamaz; [veri üretim bölümünde](../ogrenme/veri-uretimi.md) farkı gör.

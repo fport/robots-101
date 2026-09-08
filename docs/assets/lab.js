@@ -1,6 +1,7 @@
 (function () {
   "use strict";
   function init() {
+    const en = document.documentElement.lang.startsWith("en");
     const arm = document.querySelector("#kinematics-lab");
     if (arm && !arm.dataset.ready) {
       arm.dataset.ready = "true";
@@ -17,7 +18,7 @@
         arm.querySelector("#elbow-dot").setAttribute("cy", e[1]);
         arm.querySelector("#tip-dot").setAttribute("cx", t[0]);
         arm.querySelector("#tip-dot").setAttribute("cy", t[1]);
-        arm.querySelector("#arm-result").textContent = `q₁ = ${a}° (${q1.toFixed(3)} rad) · q₂ = ${b}° (${q2.toFixed(3)} rad) | Uç: x = ${(tip[0]*100).toFixed(1)} cm, y = ${(tip[1]*100).toFixed(1)} cm`;
+        arm.querySelector("#arm-result").textContent = `q₁ = ${a}° (${q1.toFixed(3)} rad) · q₂ = ${b}° (${q2.toFixed(3)} rad) | ${en ? "Tip" : "Uç (tip)"}: x = ${(tip[0]*100).toFixed(1)} cm, y = ${(tip[1]*100).toFixed(1)} cm`;
       };
       arm.querySelectorAll("input").forEach(el => el.addEventListener("input", update));
       update();
@@ -29,12 +30,14 @@
         const values = ["episodes", "seconds", "fps", "cameras"].map(id => Number(planner.querySelector(`#${id}`).value));
         const out = planner.querySelector("#dataset-result");
         if (values.some(n => !Number.isFinite(n) || n <= 0) || values[0] % 1 || values[3] % 1) {
-          out.textContent = "Pozitif değerler gir; episode ve kamera sayısı tam sayı olmalı."; return;
+          out.textContent = en ? "Enter positive values; episode and camera counts must be integers." : "Pozitif değerler gir; bölüm (episode) ve kamera sayısı tam sayı olmalı."; return;
         }
         const [episodes, seconds, fps, cameras] = values;
         const frames = episodes * seconds * fps;
         const bytes = frames * cameras * 640 * 480 * 3;
-        out.textContent = `${Math.round(frames).toLocaleString("tr-TR")} zaman adımı · ${Math.round(frames*cameras).toLocaleString("tr-TR")} kamera karesi · ${(episodes*seconds/60).toFixed(1)} dk net gösterim · sıkıştırılmamış RGB ≈ ${(bytes/1e9).toFixed(2)} GB. MP4 boyutu codec ve sahneye bağlıdır; reset süreleri dahil değildir.`;
+        out.textContent = en
+          ? `${Math.round(frames).toLocaleString("en-US")} time steps · ${Math.round(frames*cameras).toLocaleString("en-US")} camera frames · ${(episodes*seconds/60).toFixed(1)} min of demonstrations · uncompressed RGB ≈ ${(bytes/1e9).toFixed(2)} GB. MP4 size depends on codec and scene; reset time is excluded.`
+          : `${Math.round(frames).toLocaleString("tr-TR")} zaman adımı (time step) · ${Math.round(frames*cameras).toLocaleString("tr-TR")} kamera karesi (frame) · ${(episodes*seconds/60).toFixed(1)} dk net gösterim (demonstration) · sıkıştırılmamış RGB ≈ ${(bytes/1e9).toFixed(2)} GB. MP4 boyutu codec ve sahneye bağlıdır; reset süreleri dahil değildir.`;
       };
       planner.querySelectorAll("input").forEach(el => el.addEventListener("input", update));
       update();
@@ -46,7 +49,9 @@
         const hz = Number(chunk.querySelector("#control-hz").value);
         const steps = Number(chunk.querySelector("#chunk-steps").value);
         const latency = Number(chunk.querySelector("#latency-ms").value);
-        chunk.querySelector("#chunk-result").textContent = `Kontrol periyodu: ${(1000/hz).toFixed(1)} ms · yürütülen ${steps} eylem: ${(steps/hz).toFixed(2)} s · inference: ${latency} ms · ${latency > steps/hz*1000 ? "Inference bu yürütme penceresinden uzun; kuyruk boşalabilir." : "Pencere gecikmeden uzun; bu gerekli bir bütçe kontrolüdür, kesintisiz kontrol garantisi değildir."} Kamera, ağ ve işlem süreleri bu basit hesaba dahil değil.`;
+        chunk.querySelector("#chunk-result").textContent = en
+          ? `Control period: ${(1000/hz).toFixed(1)} ms · ${steps} executed actions: ${(steps/hz).toFixed(2)} s · inference: ${latency} ms · ${latency > steps/hz*1000 ? "Inference exceeds the execution window; the queue may run empty." : "The window exceeds inference latency; this budget check does not guarantee uninterrupted control."} Camera, network and processing overhead are excluded.`
+          : `Kontrol periyodu (control period): ${(1000/hz).toFixed(1)} ms · yürütülen ${steps} eylem (action): ${(steps/hz).toFixed(2)} s · çıkarım (inference): ${latency} ms · ${latency > steps/hz*1000 ? "Inference bu yürütme penceresinden uzun; kuyruk boşalabilir." : "Pencere gecikmeden uzun; bu gerekli bir bütçe kontrolüdür, kesintisiz kontrol garantisi değildir."} Kamera, ağ ve işlem süreleri bu basit hesaba dahil değil.`;
       };
       chunk.querySelectorAll("input").forEach(el => el.addEventListener("input", update));
       update();
@@ -62,7 +67,7 @@
       const update = () => {
         const count = boxes.filter(b => b.checked).length;
         progress.querySelector("progress").value = count;
-        progress.querySelector("#progress-summary").textContent = `${count} / ${boxes.length} durak tamamlandı`;
+        progress.querySelector("#progress-summary").textContent = `${count} / ${boxes.length} ${en ? "milestones completed" : "durak tamamlandı"}`;
       };
       boxes.forEach(box => {
         box.checked = saved[box.id] === true;

@@ -10,7 +10,7 @@ Kontrol tarihi: **8 Eylül 2026**. Bu sayfalar Türkçe bir çalışma rehberi o
 | [Hashtag Robotics SO-101](https://labs.hashtagrobotics.tr/so-101-robot-kol) | Kit bağlamı, leader/follower, bileşen ve eklenti bilgisi |
 | [Qwak CDN HashtagRobotics adresi](https://cdn-avatars.qwak.ai/HashtagRobotics) | Tarayıcı aracıyla okunabilir içerik alınamadı; teknik bilgi kaynağı olarak kullanılmadı |
 
-CDN adresinin bir eğitim kılavuzu, marka varlığı veya başka bir kaynak olduğunu erişim başarısızlığından çıkarmadık. Ürün iddialarıyla bağımsız test sonuçlarını birbirine karıştırmadık.
+CDN adresinin bir eğitim (training) kılavuzu, marka varlığı veya başka bir kaynak olduğunu erişim başarısızlığından çıkarmadık. Ürün iddialarıyla bağımsız test sonuçlarını birbirine karıştırmadık.
 
 ## Ana teknik kaynaklar
 
@@ -22,25 +22,29 @@ CDN adresinin bir eğitim kılavuzu, marka varlığı veya başka bir kaynak old
 | Teleop/kayıt/eğitim | [Imitation learning](https://huggingface.co/docs/lerobot/en/il_robots) |
 | Kameralar | [Camera guide](https://huggingface.co/docs/lerobot/en/cameras) |
 | Kamera matematiği | [OpenCV kalibrasyon öğreticisi](https://docs.opencv.org/4.13.0/dc/dbb/tutorial_py_calibration.html), [calib3d API](https://docs.opencv.org/4.13.0/d9/d0c/group__calib3d.html) |
-| Sayısal ters kinematik | [Lynch/Park, Modern Robotics 6.2](https://modernrobotics.northwestern.edu/nu-gm-book-resource/6-2-numerical-inverse-kinematics-part-1-of-2/) |
-| Optimizer | [PyTorch AdamW](https://docs.pytorch.org/docs/stable/generated/torch.optim.AdamW.html) |
-| Dataset v3 | [LeRobotDataset v3](https://huggingface.co/docs/lerobot/en/lerobot-dataset-v3) |
+| Sayısal ters kinematik (inverse kinematics) | [Lynch/Park, Modern Robotics 6.2](https://modernrobotics.northwestern.edu/nu-gm-book-resource/6-2-numerical-inverse-kinematics-part-1-of-2/) |
+| eniyileyici (Optimizer) | [PyTorch AdamW](https://docs.pytorch.org/docs/stable/generated/torch.optim.AdamW.html) |
+| veri kümesi (Dataset) v3 | [LeRobotDataset v3](https://huggingface.co/docs/lerobot/en/lerobot-dataset-v3) |
 | SmolVLA | [Policy docs](https://huggingface.co/docs/lerobot/en/smolvla), [makale](https://arxiv.org/abs/2506.01844), [model](https://huggingface.co/lerobot/smolvla_base) |
 | Kamera eşleme | [Rename map](https://huggingface.co/docs/lerobot/en/rename_map) |
 | ACT | [ACT docs](https://huggingface.co/docs/lerobot/en/act) |
-| Donanımda inference | [Rollout](https://huggingface.co/docs/lerobot/en/inference) |
+| Donanımda çıkarım (inference) | [Rollout](https://huggingface.co/docs/lerobot/en/inference) |
 | Asenkron/RTC | [Async](https://huggingface.co/docs/lerobot/en/async), [RTC](https://huggingface.co/docs/lerobot/en/rtc) |
 | MuJoCo genel bakış | [Overview](https://mujoco.readthedocs.io/en/stable/overview.html) |
 | MuJoCo Python | [Python bindings](https://mujoco.readthedocs.io/en/stable/python.html) |
 | MuJoCo modelleme | [Modeling](https://mujoco.readthedocs.io/en/stable/modeling.html), [XML reference](https://mujoco.readthedocs.io/en/stable/XMLreference.html) |
 | Strands sim | [Simulation overview](https://strands-labs.github.io/robots/simulation/overview/) |
 | Strands kayıt | [Recording](https://github.com/strands-labs/robots/blob/main/docs/recording.md) |
-| Strands policy | [LeRobot local](https://github.com/strands-labs/robots/blob/main/docs/policies/lerobot-local.md) |
+| Strands politika (policy) | [LeRobot local](https://github.com/strands-labs/robots/blob/main/docs/policies/lerobot-local.md) |
 | Strands eğitim | [Training overview](https://github.com/strands-labs/robots/blob/main/docs/training/overview.md) |
 | Python ortamı | [uv](https://docs.astral.sh/uv/) |
 | Site | [MkDocs](https://www.mkdocs.org/), [Material](https://squidfunk.github.io/mkdocs-material/) |
 
+Hub üzerinde incelenip indirilen örnek [SO-100 pick-and-place veri kümesi](https://huggingface.co/datasets/lerobot/svla_so100_pickplace), `728583b5eaf9e739a7f119e2def466fa1d552402` sürümünde sabitlendi. İndirme API’si için [Hugging Face indirme rehberi](https://huggingface.co/docs/huggingface_hub/en/guides/download) kullanıldı. İki dilde site üretimi [MkDocs static i18n](https://ultrabug.github.io/mkdocs-static-i18n/) 1.3.1 ile yapılır.
+
 ## Sürüm sabitleme
+
+Akış şemaları [Mermaid](https://mermaid.js.org/intro/) **11.17.2** ile çizilir; yerel paket ve MIT lisansı `docs/assets/vendor/` içinde tutulur. [Tema ayarları](https://mermaid.js.org/config/theming.html) neon yeşil açık/koyu görünüme uyarlandı. Bu yerel sunum katmanı simülasyon veya model eğitimi çalıştırmaz.
 
 | Bileşen | Bu atölyenin tabanı |
 |---|---|
@@ -64,6 +68,6 @@ GitHub LeRobot kaynağı 0.6.2 geliştirme sürümünü işaret ediyordu; PyPI'd
 
 ## Güncelleme yöntemi
 
-Çalışan ortamı koru. Yeni paketleri ayrı `.venv-next` ortamında dene; önce physics, sonra SO-101 render, dataset kaydı/okuma, şema denetimi ve kısa eğitim. Başarılıysa sürüm dosyalarını ve doğrulama sayfasını birlikte güncelle.
+Çalışan ortamı koru. Yeni paketleri ayrı `.venv-next` ortamında dene; önce physics, sonra SO-101 görüntü üretimi (render), dataset kaydı/okuma, şema denetimi ve kısa eğitim. Başarılıysa sürüm dosyalarını ve doğrulama sayfasını birlikte güncelle.
 
-Model ağırlıklarını indirirken model repo revision'ını ayrıca kaydet. Python paketini sabitlemek Hub'daki `main` ağırlığını sabitlemez. Dataset, base model ve kendi checkpoint'inin kaynaklarını deney defterinde ayrı satırlarda tut.
+Model ağırlıklarını indirirken model repo revision'ını ayrıca kaydet. Python paketini sabitlemek Hub'daki `main` ağırlığını sabitlemez. Dataset, base model ve kendi kontrol noktası (checkpoint)'inin kaynaklarını deney defterinde ayrı satırlarda tut.

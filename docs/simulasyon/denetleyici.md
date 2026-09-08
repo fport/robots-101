@@ -1,8 +1,8 @@
 # Ölçülen durumla hedef takibi
 
-Bu deneyde SO-101 modeli için küçük, tamamlanabilir bir görev kuruyoruz: taban dönme eklemini `+0.25 → −0.25 → 0` radyan hedeflerine götürmek, diğer eklem referanslarını sıfırda tutmak. Her geçiş gerçek simülasyon ölçümüne bağlı. Böylece “API başarılı döndü” ile “hedefe ulaşıldı” arasındaki farkı deneyle görürsün.
+Bu deneyde SO-101 modeli için küçük, tamamlanabilir bir görev kuruyoruz: taban dönme eklemini `+0.25 → −0.25 → 0` radyan hedeflerine götürmek, diğer eklem (joint) referanslarını sıfırda tutmak. Her geçiş gerçek simülasyon (simulation) ölçümüne bağlı. Böylece “API başarılı döndü” ile “hedefe ulaşıldı” arasındaki farkı deneyle görürsün.
 
-Bu bir **eklem uzayı görevi**. Görüntüden küp bulma veya kavrama denetleyicisi içermez. Sonraki manipülasyon görevinde kullanacağın ölçüm, zaman aşımı ve durum makinesi iskeletini öğretir.
+Bu bir **eklem uzayı görevi**. Görüntüden küp bulma veya kavrama denetleyicisi içermez. Sonraki manipülasyon görevinde kullanacağın ölçüm, zaman aşımı (timeout) ve durum (state) makinesi iskeletini öğretir.
 
 ## 1. Çalıştır
 
@@ -12,7 +12,7 @@ Proje kökünde, kurulu sim ortamıyla:
 .venv/bin/python examples/09_so101_waypoints.py
 ```
 
-`outputs/waypoints/trajectory.csv` ve `metrics.json` oluşur. Çıktı klasörü zaten varsa script üzerine yazmaz; `--output outputs/waypoints-02` seç. İlk robot varlığı indirmesinde internet gerekir. Bu deney kamera render etmediği için normal çalışmada görüntü üretimi gerekmez.
+`outputs/waypoints/trajectory.csv` ve `metrics.json` oluşur. Çıktı klasörü zaten varsa script üzerine yazmaz; `--output outputs/waypoints-02` seç. İlk robot varlığı indirmesinde internet gerekir. Bu deney kamera görüntü üretimi (render) etmediği için normal çalışmada görüntü üretimi gerekmez.
 
 Masaüstü penceresiyle izlemek için macOS:
 
@@ -35,7 +35,7 @@ Linux masaüstünde aynı seçenekle normal Python kullanılabilir. `--viewer` d
 | Ardışık uygun ölçüm | 10 | Tek örneklik hedef geçişi yeterli sayılmaz |
 | Zaman aşımı | Hedef başına 8 s | Ulaşılamayan hedef sonsuz döngü üretmez |
 
-Bu tolerans bir donanım hassasiyet iddiası değildir. Görev için önceden seçilmiş kabul ölçütüdür. On ardışık 50 Hz gözlem, on kontrol adımını kapsar; ilk ve son uygun ölçüm arasındaki zaman 0.18 s'dir. Ayrı bir hız eşiği kontrol edilmediği için bu koşul “mutlak olarak durdu” kanıtı da değildir.
+Bu tolerans bir donanım hassasiyet iddiası değildir. Görev için önceden seçilmiş kabul ölçütüdür. On ardışık 50 Hz gözlem (observation), on kontrol adımını kapsar; ilk ve son uygun ölçüm arasındaki zaman 0.18 s'dir. Ayrı bir hız (velocity) eşiği kontrol edilmediği için bu koşul “mutlak olarak durdu” kanıtı da değildir.
 
 ## 3. Dört ayrı sayı
 
@@ -46,7 +46,7 @@ q_before   = komuttan önce ölçülen konum
 q_after    = fizik ilerledikten sonra ölçülen konum
 ```
 
-Pozisyon servosu ara referansı takip etmeye çalışır. Dinamikler, sürtünme, yerçekimi ve temas nedeniyle ölçülen konum referansla aynı olmak zorunda değildir. Bir sonraki aşamaya geçişi `command == goal` ile kontrol etseydik robotun yetişip yetişmediğini öğrenemezdik.
+Pozisyon servosu ara referansı takip etmeye çalışır. Dinamikler, sürtünme (friction), yerçekimi (gravity) ve temas (contact) nedeniyle ölçülen konum referansla aynı olmak zorunda değildir. Bir sonraki aşamaya geçişi `command == goal` ile kontrol etseydik robotun yetişip yetişmediğini öğrenemezdik.
 
 Kodda komut, önceki komut üzerinden sınırlandırılır:
 
@@ -54,7 +54,7 @@ Kodda komut, önceki komut üzerinden sınırlandırılır:
 command = previous_command + clip(goal - previous_command, -0.01, 0.01)
 ```
 
-Bu **referansın** değişim sınırıdır; robotun gerçek hızına sert limit koymaz. Gerçek hızı da sınırlamak istiyorsan ölçülen hızları, aktüatör davranışını ve ayrı denetim koşullarını incelemelisin. Bu değer fiziksel SO-101'e doğrudan taşınacak güvenlik parametresi değildir.
+Bu **referansın** değişim sınırıdır; robotun gerçek hızına sert limit koymaz. Gerçek hızı da sınırlamak istiyorsan ölçülen hızları, aktüatör (actuator) davranışını ve ayrı denetim koşullarını incelemelisin. Bu değer fiziksel SO-101'e doğrudan taşınacak güvenlik parametresi değildir.
 
 ## 4. Strands çağrısı tam olarak ne yapıyor?
 
@@ -73,14 +73,21 @@ Bu sürümde `send_action` aktüatör hedeflerini yazar ve verilen sayıda fizik
 
 ## 5. Durum makinesi
 
-```text
-HEDEF 0 → uygun ölçüm sayısı 10 → HEDEF 1
-HEDEF 1 → uygun ölçüm sayısı 10 → HEDEF 2
-HEDEF 2 → uygun ölçüm sayısı 10 → BAŞARILI
-
-Her aşamada süre aşılırsa → BAŞARISIZ → raporu yaz → çık
-Her uygunsuz ölçümde ardışık uygun ölçüm sayısını sıfırla
+```mermaid
+flowchart TD
+    accTitle: Üç hedefin ölçümle tamamlanması veya zaman aşımıyla durması
+    accDescr: Her hedefte on ardışık uygun ölçüm sonraki hedefe geçiş sağlar. Herhangi bir hedefin süresi dolarsa başarısızlıkla durulur. Başarı veya zaman aşımı sonucu raporlanır.
+    A["HEDEF 0<br/>Taban: +0.25 rad"] -->|10 ardışık uygun ölçüm| B["HEDEF 1<br/>Taban: -0.25 rad"]
+    B -->|10 ardışık uygun ölçüm| C["HEDEF 2<br/>Taban: 0 rad"]
+    C -->|10 ardışık uygun ölçüm| S(["BAŞARILI"])
+    A -->|"Zaman aşımı (timeout)"| F(["BAŞARISIZ"])
+    B -->|Zaman aşımı| F
+    C -->|Zaman aşımı| F
+    S --> R["Sonucu raporla ve çık"]
+    F --> R
 ```
+
+Her hedefte, en büyük eklem hatası toleransı aşarsa ardışık uygun ölçüm sayacı sıfırlanır. Hedefler arasında diğer beş referans sıfırda kalır.
 
 Başarıda üç aşama tamamlanmalıdır. Bir aşama başarısız olursa sonraki hedeflere geçilmez. Rapor başarısızlığı saklar ve program sıfır olmayan çıkış kodu verir; otomatik deney toplayıcısı bu farkı kullanabilir.
 
@@ -104,7 +111,7 @@ Bir satırda `q_before_1..6`, `command_1..6`, `q_after_1..6`, hedef, aşama ve z
 
 Bu denetleyiciyi öğrenmek için yalnız `q_before` yeterli olmayabilir: aynı konumdan farklı aşamalarda sağa veya sola gitmek gerekir. Hedef/aşama bilgisi de gözleme katılmalı; referans değişim sınırını tam taklit etmek için önceki komut gibi geçmiş bilgisi gerekebilir. Bu, neden bir politikanın görev koşulu veya geçmiş gözlem kullandığına küçük bir örnektir.
 
-Bu CSV bir LeRobot dataset değildir; görüntü, görev metni ve kayıt şeması yoktur. Üç sabit eklem hedefi de görsel kavrama uzmanı üretmez. Görüntülü uzman veri hattına geçerken hem görev denetleyicisi hem gözlem/eylem kaydı eklenir.
+Bu CSV bir LeRobot veri kümesi (dataset) değildir; görüntü, görev metni ve kayıt şeması yoktur. Üç sabit eklem hedefi de görsel kavrama uzmanı üretmez. Görüntülü uzman veri hattına geçerken hem görev denetleyicisi hem gözlem/eylem (action) kaydı eklenir.
 
 ## 8. Küp kavrama denetleyicisine ilerlemek
 
@@ -119,7 +126,7 @@ Eklem hedefi geçişlerinin yerine şu aşamalar gelir:
 | Taşı | Nesne/uç konumu | Bırakma bölgesine erişme |
 | Bırak ve uzaklaş | Nesnenin bölge/masa durumu | Tutucudan bağımsız yerleşme |
 
-Kapanmış tutucu tek başına nesne kavrama kanıtı değildir. Nesne yüksekliği ve bırakma sonrası konumu gibi dış ölçütler gerekir. IK için uygun uç frame'i, SO-101'in yönelim kısıtları ve çarpışmalar ayrıca çözülür. Bu tablo tasarım tarifidir; burada çalıştırılmış tam kavrama uygulaması olarak sunulmaz.
+Kapanmış tutucu (gripper) tek başına nesne kavrama kanıtı değildir. Nesne yüksekliği ve bırakma sonrası konumu gibi dış ölçütler gerekir. IK için uygun uç kare (frame)'i, SO-101'in yönelim kısıtları ve çarpışmalar ayrıca çözülür. Bu tablo tasarım tarifidir; burada çalıştırılmış tam kavrama uygulaması olarak sunulmaz.
 
 ## 9. Deneyler
 

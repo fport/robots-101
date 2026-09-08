@@ -1,6 +1,6 @@
 # Kinematik, ters kinematik ve tekillik
 
-Bu bölümün sonunda `(x, y)` hedefinden iki farklı eklem çözümü çıkaracak, ikisini ileri kinematikle doğrulayacak ve neden ikisinin de gerçek bir kol için geçerli olmayabileceğini açıklayacaksın. Ön koşul: [koordinatlar ve kontrol](robotik.md).
+Bu bölümün sonunda `(x, y)` hedefinden iki farklı eklem (joint) çözümü çıkaracak, ikisini ileri kinematikle doğrulayacak ve neden ikisinin de gerçek bir kol için geçerli olmayabileceğini açıklayacaksın. Ön koşul: [koordinatlar ve kontrol](robotik.md).
 
 Hesapta kullandığımız düzlemsel iki eklemli kolun parçaları **18 cm ve 14 cm**. Bunlar bir öğretim modeli; SO-101'in link ölçüleri veya gerçek IK modeli olarak kullanılmaz.
 
@@ -61,7 +61,7 @@ Son komutun hata koduyla bitmesi beklenir. Script iki çözümü FK ile `1e-12 m
 
 ## 4. Birden fazla çözümden hangisi?
 
-Mevcut durum A dalına yakınsa B dalına aniden geçmek büyük hareket isteyebilir. Çözüm seçerken eklem sınırı, hareketin sürekliliği, masa/gövde çarpışması ve tutucunun yaklaşma yönü gerekir. Uç aynı noktada olsa bile kolun kapladığı hacim farklıdır.
+Mevcut durum (state) A dalına yakınsa B dalına aniden geçmek büyük hareket isteyebilir. Çözüm seçerken eklem sınırı, hareketin sürekliliği, masa/gövde çarpışması ve tutucunun yaklaşma yönü gerekir. Uç aynı noktada olsa bile kolun kapladığı hacim farklıdır.
 
 Pratik bir seçim yaklaşımı: geçersiz dalları ele; kalanlarda mevcut açıya olan ağırlıklı uzaklığı değerlendir. Dönel açılarda `179°` ile `−179°` farkının her koşulda `358°` olmadığını da unutma; sürekli dönebilen ve mekanik sınırları olan eklemlerin davranışı ayrı değerlendirilir.
 
@@ -87,7 +87,7 @@ R_inverse = Rᵀ
 t_inverse = -Rᵀ t
 ```
 
-Dönüşümleri zincirlerken aradaki frame isimleri eşleşmeli: `T_base_camera × T_camera_object = T_base_object`. Kameranın konumunu bilmek, nesnenin kamera içindeki derinliğini otomatik olarak vermez. [Kamera bölümü](../donanim/kamera-kalibrasyonu.md) bu eksik ölçümü ele alır.
+Dönüşümleri zincirlerken aradaki kare (frame) isimleri eşleşmeli: `T_base_camera × T_camera_object = T_base_object`. Kameranın konumunu bilmek, nesnenin kamera içindeki derinliğini otomatik olarak vermez. [Kamera bölümü](../donanim/kamera-kalibrasyonu.md) bu eksik ölçümü ele alır.
 
 ## 6. Jacobian: küçük hareketin etkisi
 
@@ -122,10 +122,10 @@ min_Δq ||J Δq - e||² + λ² ||Δq||²
 Δq = Jᵀ (J Jᵀ + λ² I)⁻¹ e
 ```
 
-İlk terim uç hatasını azaltır, ikinci terim büyük eklem adımını cezalandırır. `λ` büyüdükçe düzeltme daha tutucu olur; bu birimlere bağlı sayısal ayardır. Hesapta açık matris tersi oluşturmak yerine doğrusal sistemi çözmek tercih edilir. Sönüm eklemek erişilemeyen hedefi erişilebilir yapmaz; ayrıca eklem limiti veya çarpışma kontrolü yerine geçmez.
+İlk terim uç hatasını azaltır, ikinci terim büyük eklem adımını cezalandırır. `λ` büyüdükçe düzeltme daha tutucu (gripper) olur; bu birimlere bağlı sayısal ayardır. Hesapta açık matris tersi oluşturmak yerine doğrusal sistemi çözmek tercih edilir. Sönüm eklemek erişilemeyen hedefi erişilebilir yapmaz; ayrıca eklem limiti veya çarpışma (collision) kontrolü yerine geçmez.
 
 ## 8. VLA varken IK neden öğreniyoruz?
 
-Eklem eylemi üreten VLA'nın her adımda senin yazdığın analitik IK'yı çağırması şart değildir. Ancak veri üretirken, görev sınırını seçerken ve yanlış hareketi incelerken geometri gerekir. Model masanın altına uzanıyorsa kamera dönüşümü mü yanlış, hedef mi erişilemez, yoksa action birimi mi bozuk sorularını ayırabilmelisin.
+Eklem eylemi üreten VLA'nın her adımda senin yazdığın analitik IK'yı çağırması şart değildir. Ancak veri üretirken, görev sınırını seçerken ve yanlış hareketi incelerken geometri gerekir. Model masanın altına uzanıyorsa kamera dönüşümü mü yanlış, hedef mi erişilemez, yoksa eylem (action) birimi mi bozuk sorularını ayırabilmelisin.
 
-**Alıştırma:** `--x 0.32 --y 0` çalıştır. İki çözümün birleşmesini ve en küçük tekil değerin sıfıra yaklaşmasını açıkla. Ardından hedefi 1 cm daha uzağa taşı; sonucu eğitim eksikliğiyle değil erişim hesabıyla açıklayabilmelisin.
+**Alıştırma:** `--x 0.32 --y 0` çalıştır. İki çözümün birleşmesini ve en küçük tekil değerin sıfıra yaklaşmasını açıkla. Ardından hedefi 1 cm daha uzağa taşı; sonucu eğitim (training) eksikliğiyle değil erişim hesabıyla açıklayabilmelisin.

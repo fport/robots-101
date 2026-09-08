@@ -31,11 +31,11 @@ Parametresiz `Agent` varsayılan olarak Amazon Bedrock sağlayıcısını kullan
 
 ## Ajan ile VLA aynı model değildir
 
-Strands Agent, talebi parçalayıp araç seçer. SmolVLA, anlık görüntü/durum/görevden motor eylemleri üretir. Bir ajan “pick” aracını seçebilir; alttaki politika hareket döngüsünü yürütür. Her 30 Hz motor komutunu ayrı sohbet isteği yapmak gecikme ve tutarlılık sorunları yaratabilir.
+Strands Agent, talebi parçalayıp araç seçer. SmolVLA, anlık görüntü/durum (state)/görevden motor eylemleri üretir. Bir ajan “pick” aracını seçebilir; alttaki politika (policy) hareket döngüsünü yürütür. Her 30 Hz motor komutunu ayrı sohbet isteği yapmak gecikme (latency) ve tutarlılık sorunları yaratabilir.
 
 ## Deterministik işler kodda kalsın
 
-Episode sayımı, dosya sonlandırma, hata denetimi ve ölçüm kaydı Python döngüsünde açık biçimde yapılmalı. “20 gösterim topladım” şeklinde dil modeli anlatımı gerçek metadata'nın yerine geçmez. `03_record_sim.py` bu yüzden her episode'u kodla kaydeder ve gerçek sayıyı doğrular.
+bölüm (Episode) sayımı, dosya sonlandırma, hata denetimi ve ölçüm kaydı Python döngüsünde açık biçimde yapılmalı. “20 gösterim (demonstration) topladım” şeklinde dil modeli anlatımı gerçek üstveri (metadata)'nın yerine geçmez. `03_record_sim.py` bu yüzden her episode'u kodla kaydeder ve gerçek sayıyı doğrular.
 
 ## Önerilen ilk ajan görevleri
 
@@ -43,13 +43,13 @@ Episode sayımı, dosya sonlandırma, hata denetimi ve ölçüm kaydı Python d�
 |---|---|
 | “Robotun eklemlerini listele.” | State API çıktısı |
 | “Mevcut kameraları göster.” | Kamera adları |
-| “Front kameradan görüntü al.” | Render görüntüsü |
+| “Front kameradan görüntü al.” | görüntü üretimi (Render) görüntüsü |
 | “Bu rapordaki hataları açıkla.” | Önceden üretilmiş metriklere dayanan yorum |
 
 Ajanın bir görsele bakıp “başarılı kavrama” demesi, fiziksel başarı ölçütünü otomatik doğrulamaz. Görsel değerlendirme yardımcı bir sinyal olabilir; nesnenin kapta kalması gibi ölçümleri ayrı koru.
 
 ## Donanıma geçince
 
-Önce LeRobot ile çalıştığı doğrulanan kalibrasyon, kamera, birim ve kısa rollout kullanılır. Strands hardware kurulumunda aynı parametrelerin/processor'ların taşındığını kontrol et. Donanımı birden fazla süreç yönetmesin. İlk agent görevi motor hareketi istemek yerine durum okumak olabilir.
+Önce LeRobot ile çalıştığı doğrulanan kalibrasyon (calibration), kamera, birim ve kısa politika yürütümü (rollout) kullanılır. Strands hardware kurulumunda aynı parametrelerin/processor'ların taşındığını kontrol et. Donanımı birden fazla süreç yönetmesin. İlk agent görevi motor hareketi istemek yerine durum okumak olabilir.
 
-İleri tasarımda ajan yalnız önceden tanımlı görevleri başlatır; hareket süresi, eylem limitleri, timeout ve hata dönüşü uygulama katmanında belirlenir. Bu, robot görevinin somut çalışma sözleşmesidir. [Strands Robots API](https://github.com/strands-labs/robots/blob/main/docs/api-reference.md)
+İleri tasarımda ajan yalnız önceden tanımlı görevleri başlatır; hareket süresi, eylem (action) limitleri, timeout ve hata dönüşü uygulama katmanında belirlenir. Bu, robot görevinin somut çalışma sözleşmesidir. [Strands Robots API](https://github.com/strands-labs/robots/blob/main/docs/api-reference.md)

@@ -4,7 +4,7 @@ MuJoCo, eklemli cisimlerin hareketini ve birbirleriyle temasını hesaplayan fiz
 
 ## Bir simülasyonun dört parçası
 
-**Model:** robotun geometri, eklem, kütle, limit ve aktüatör tanımı. **Durum:** o andaki konum/hız değerleri. **Kontrol:** aktüatöre verilen hedefler. **Adımlama:** fizik motorunun zamanı ilerletmesi.
+**Model:** robotun geometri, eklem (joint), kütle (mass), limit ve aktüatör (actuator) tanımı. **Durum (state):** o andaki konum/hız (velocity) değerleri. **Kontrol:** aktüatöre verilen hedefler. **Adımlama:** fizik motorunun zamanı ilerletmesi.
 
 Python API'sinde bunları şu isimlerle görürsün:
 
@@ -27,11 +27,11 @@ mujoco.mj_step(model, data)
 | `option timestep="0.002"` | Her fizik adımı iki milisaniye |
 | `body` | Birlikte hareket eden gövde |
 | `joint type="hinge" axis="0 0 1"` | Z etrafında dönen eklem |
-| `geom type="capsule"` | Bağlantının görünümü ve çarpışma şekli |
+| `geom type="capsule"` | Bağlantının görünümü ve çarpışma (collision) şekli |
 | `site name="tip"` | Uç nokta için işaret |
 | `position ... kp="25"` | Eklem hedefi takip eden aktüatör |
 
-`geom` çarpışma/geometriyi, `joint` hareket serbestliğini tanımlar. Bir mesh'in güzel görünmesi onun kütlesinin, sürtünmesinin ve temas davranışının gerçekçi ayarlandığı anlamına gelmez. [MuJoCo modelleme kılavuzu](https://mujoco.readthedocs.io/en/stable/modeling.html)
+`geom` çarpışma/geometriyi, `joint` hareket serbestliğini tanımlar. Bir mesh'in güzel görünmesi onun kütlesinin, sürtünmesinin ve temas (contact) davranışının gerçekçi ayarlandığı anlamına gelmez. [MuJoCo modelleme kılavuzu](https://mujoco.readthedocs.io/en/stable/modeling.html)
 
 ## Çalıştır ve tek değişkeni değiştir
 
@@ -44,11 +44,11 @@ Her koşu aynı CSV dosyasını yeniler; karşılaştırmak istiyorsan ilkini fa
 
 **Deney A:** hedefin işaretini değiştir. Son ölçüm de aynı yönde mi değişiyor? **Deney B:** XML'deki `kp` değerini 25'ten 10'a indir. Hedefe yaklaşma hızı nasıl değişiyor? **Deney C:** `damping` değerini değiştir. Salınım/takip hatasını yalnız son kareye bakarak mı, tüm eğriyi izleyerek mi anlıyorsun?
 
-Her seferinde yalnız bir parametreyi değiştir ve orijinal dosyaya dönmek için değişikliğini not et. Bu deneyde eksen dikey olduğu için yerçekimi bu eksen çevresindeki hareketi doğrudan aynı şekilde etkilemez; omuz kaldırma gibi bir deney için eksen/geometri değişikliği gerekir.
+Her seferinde yalnız bir parametreyi değiştir ve orijinal dosyaya dönmek için değişikliğini not et. Bu deneyde eksen dikey olduğu için yerçekimi (gravity) bu eksen çevresindeki hareketi doğrudan aynı şekilde etkilemez; omuz kaldırma gibi bir deney için eksen/geometri değişikliği gerekir.
 
 ## `mj_step`, `mj_forward` ve çizim
 
-`mj_step` zamanı ilerletir. `mj_forward` mevcut durumdan türetilen kinematik/dinamik hesapları günceller; tek başına bir zaman adımı değildir. Görüntü render etmek de eğitim veya fiziksel kontrol değildir.
+`mj_step` zamanı ilerletir. `mj_forward` mevcut durumdan türetilen kinematik/dinamik hesapları günceller; tek başına bir zaman adımı değildir. Görüntü görüntü üretimi (render) etmek de eğitim (training) veya fiziksel kontrol değildir.
 
 Runtime `qpos` vektörünün boyutunu motor sayısına eşitleme: serbest bir küpün pozisyon/quaternion bileşenleri de model durumunda bulunabilir. SO-101 state okurken robotun eklemlerini isimle seçmek, bütün `data.qpos` dizisini “altı robot eklemi” sanmaktan daha güvenilirdir.
 

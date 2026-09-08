@@ -4,10 +4,10 @@
 
 ## 1. Altı sayı, altı serbest yönelim mi?
 
-SO-101 politikasının action şekli `[6]`. Ucun x/y/z ve roll/pitch/yaw değerlerini bağımsız seçebilir misin?
+SO-101 politikasının eylem (action) şekli `[6]`. Ucun x/y/z ve roll/pitch/yaw değerlerini bağımsız seçebilir misin?
 
 ??? success "Çözüm"
-    Hayır. Altı bileşenin biri tutucu açılışıdır; kolun beş dönel eklemi vardır. Altı boyutlu serbest uç pozu genel olarak bağımsız sağlanamaz. Ayrıca erişim, eklem limitleri ve çarpışmalar gerekir. Action boyutu ile uç görev uzayı aynı kavram değildir.
+    Hayır. Altı bileşenin biri tutucu (gripper) açılışıdır; kolun beş dönel eklemi vardır. Altı boyutlu serbest uç pozu genel olarak bağımsız sağlanamaz. Ayrıca erişim, eklem (joint) limitleri ve çarpışmalar gerekir. Action boyutu ile uç görev uzayı aynı kavram değildir.
 
 ## 2. Radyan mı normalize mi?
 
@@ -60,7 +60,7 @@ Kamera içindeki `(0.05,0.02,0.50)` ve `(0.10,0.04,1.00)` noktaları aynı pikse
 
 ## 9. Kısa episode, uzun chunk
 
-30 karelik episode'da her başlangıç için 50 adımlık action chunk hazırlanıyor. Padding oranı?
+30 karelik bölüm (episode)'da her başlangıç için 50 adımlık eylem dizisi (action chunk) hazırlanıyor. doldurma (Padding) oranı?
 
 ??? success "Çözüm"
     Geçerli adımlar `30+29+...+1=465`; toplam `30×50=1500`. Padding `1035/1500=%69`. Üç böyle episode yine %69 üretir. Örneklerin başka episode'a taşınmaması ve padding maskesinin loss'ta kullanılması gerekir.
@@ -70,7 +70,7 @@ Kamera içindeki `(0.05,0.02,0.50)` ve `(0.10,0.04,1.00)` noktaları aynı pikse
 Kare hatalar iki geçerli adımda `[1,4]` ve `[9,16]`. Üçüncü adım padding. Maskeyi çarptıktan sonra altı elemana bölmek doğru mu?
 
 ??? success "Çözüm"
-    Hayır. Toplam 30'u dört geçerli elemana bölmek gerekir: 7.5. Altıya bölmek 5 üretir ve padding oranı yüksek batch'i yapay olarak daha iyi gösterir. `action_is_pad=true` geçersiz zaman demektir.
+    Hayır. Toplam 30'u dört geçerli elemana bölmek gerekir: 7.5. Altıya bölmek 5 üretir ve padding oranı yüksek örnek grubu (batch)'i yapay olarak daha iyi gösterir. `action_is_pad=true` geçersiz zaman demektir.
 
 ## 11. Flow matching'deki t
 
@@ -88,21 +88,21 @@ Kare hatalar iki geçerli adımda `[1,4]` ve `[9,16]`. Üçüncü adım padding.
 
 ## 13. Batch yarıya indi
 
-24.000 eğitim frame'i, batch=8, 20.000 güncelleme için kaba epoch eşdeğeri kaç? Batch=4 olursa?
+24.000 eğitim (training) kare (frame)'i, batch=8, 20.000 güncelleme için kaba epoch eşdeğeri kaç? Batch=4 olursa?
 
 ??? success "Çözüm"
     İlki `160.000/24.000≈6.67`, ikincisi `80.000/24.000≈3.33`. Sampler ve filtreler gerçek kullanım dağılımını etkiler. Aynı step sayısı, batch değiştiğinde aynı veri maruziyeti değildir.
 
 ## 14. Validation mükemmel, yeni gün kötü
 
-Frame'leri rastgele %80/%20 ayırdın. Validation çok iyi, ertesi gün görev başarısı kötü. İlk neyi incelersin?
+Frame'leri rastgele %80/%20 ayırdın. doğrulama (Validation) çok iyi, ertesi gün görev başarısı kötü. İlk neyi incelersin?
 
 ??? success "Çözüm"
-    Komşu frame/chunk sızıntısını ve günler arasındaki görüntü/başlangıç farkını. Episode düzeyinde ayrım yap; iddian yeni güne genellemekse gün bazlı ayrı test kur. Normalizasyon istatistiklerinin hangi bölümden hesaplandığını da kontrol et. Bu gözlem tek başına daha büyük model gerektiğini göstermez.
+    Komşu frame/chunk sızıntısını ve günler arasındaki görüntü/başlangıç farkını. Episode düzeyinde ayrım yap; iddian yeni güne genellemekse gün bazlı ayrı test kur. Normalizasyon (normalization) istatistiklerinin hangi bölümden hesaplandığını da kontrol et. Bu gözlem (observation) tek başına daha büyük model gerektiğini göstermez.
 
 ## 15. %70'ten %80'e çıktı
 
-İki checkpoint 20'şer denemede 14 ve 16 başarı verdi. İkinci kesin daha iyi mi?
+İki kontrol noktası (checkpoint) 20'şer denemede 14 ve 16 başarı verdi. İkinci kesin daha iyi mi?
 
 ??? success "Çözüm"
     Bu örnekle kesinlik iddiası güçlü olmaz. Aynı koşullar, deneme sayısı, hata türleri ve belirsizlikle raporla. Tekrarlı, önceden belirlenmiş değerlendirme yap. Başarı yüzdesi artışı faydalı bir gözlem; tek başına geniş genelleme kanıtı değil.
@@ -112,7 +112,7 @@ Frame'leri rastgele %80/%20 ayırdın. Validation çok iyi, ertesi gün görev b
 Kamera videosu, altı action sütunu ve düzgün timestamp içeren 100 mock episode ürettin. SmolVLA neden başarılı kavrama öğrenmek zorunda değil?
 
 ??? success "Çözüm"
-    Şema doğruluğu davranış uzmanlığı değildir. Mock eylemler nesneyi kavrayan bir strateji göstermiyorsa modelin taklit ettiği etiketler başarılı kavramayı öğretmez. Önce uzman kontrol/teleop gösterimi ve ayrı görev başarısı ölçütü gerekir.
+    Şema doğruluğu davranış uzmanlığı değildir. Mock eylemler (actions) nesneyi kavrayan bir strateji göstermiyorsa modelin taklit ettiği etiketler başarılı kavramayı öğretmez. Önce uzman kontrol/teleop gösterimi ve ayrı görev başarısı ölçütü gerekir.
 
 ## Kendi proje sorunu yaz
 

@@ -1,6 +1,6 @@
 # Kaliteli veri toplama
 
-İlk veri setinin görevi dar olsun: **“Pick up the red cube and place it in the tray.”** Aynı görev metnini kayıt ve değerlendirmede kullan. İngilizce başlangıç metni burada açık model ekosistemiyle basit bir başlangıç tercihidir; Türkçe komut başarısı ayrıca deneyle ölçülmelidir.
+İlk veri setinin (dataset) görevi dar olsun: **“Pick up the red cube and place it in the tray.”** Aynı görev metnini kayıt ve değerlendirmede kullan. İngilizce başlangıç metni burada açık model ekosistemiyle basit bir başlangıç tercihidir; Türkçe komut başarısı ayrıca deneyle ölçülmelidir.
 
 ## Önce beş pilot episode
 
@@ -32,28 +32,28 @@ lerobot-record \
 
 `FOLLOWER_*`, `LEADER_*` ve `CAMERAS` [önceki sayfalardan](teleop.md) gelir. `local/...` burada yerel repo kimliğidir; `push_to_hub=false` olduğu için kullanıcı hesabı açmaz. Hub'a yüklemek istediğinde gerçek namespace, erişim ve veri görünürlüğünü ayrıca seçersin.
 
-Kayıt sırasında terminaldeki kontrol kısayollarını izle. Güncel kılavuz episode'u erken bitirme, yeniden çekme ve oturumu sonlandırma akışlarını açıklar. `Ctrl+C` veya kayıt sonlandırma komutu donanımdaki fiziksel güç kesme mekanizmasının yerine geçmez. [LeRobot gösterim kaydı](https://huggingface.co/docs/lerobot/en/il_robots#record-a-dataset)
+Kayıt sırasında terminaldeki kontrol kısayollarını izle. Güncel kılavuz bölüm (episode)'u erken bitirme, yeniden çekme ve oturumu sonlandırma akışlarını açıklar. `Ctrl+C` veya kayıt sonlandırma komutu donanımdaki fiziksel güç kesme mekanizmasının yerine geçmez. [LeRobot gösterim kaydı](https://huggingface.co/docs/lerobot/en/il_robots#record-a-dataset)
 
 ## Her pilotu izle
 
-1. Nesne, tutucu ve kap kritik anlarda görünüyor mu?
+1. Nesne, tutucu (gripper) ve kap kritik anlarda görünüyor mu?
 2. İlk saniyeler anlamsız bekleme mi, görevin gerçek başlangıcı mı?
-3. Action ve state arasındaki fark hareket boyunca makul mü?
+3. eylem (Action) ve durum (state) arasındaki fark hareket boyunca makul mü?
 4. Aynı görev metniyle farklı, çelişkili hedefler gösteriyor musun?
 5. Tutucu nesneyi gerçekten kaldırıyor ve bırakıyor mu?
 6. Son kare başarı mı, yalnız tutucunun kabın üstünde olması mı?
 
-Pilot başarısızsa bunu eğitim süresini artırarak telafi etmeye çalışma. Kamera yerleşimi, görev tanımı veya teleop davranışını düzelt, sonra yeni pilot çek.
+Pilot başarısızsa bunu eğitim (training) süresini artırarak telafi etmeye çalışma. Kamera yerleşimi, görev tanımı veya teleop davranışını düzelt, sonra yeni pilot çek.
 
 ## Eğitim setine büyüt
 
-Bir atölye başlangıç planı: beş başlangıç bölgesinde yaklaşık onar başarılı gösterim, toplam 50 episode. Bu **başarı garantisi veya minimum matematiksel veri gereksinimi değildir**. Görevin zorluğu, veri çeşitliliği ve pretrained model uyumu belirleyicidir.
+Bir atölye başlangıç planı: beş başlangıç bölgesinde yaklaşık onar başarılı gösterim (demonstration), toplam 50 episode. Bu **başarı garantisi veya minimum matematiksel veri gereksinimi değildir**. Görevin zorluğu, veri çeşitliliği ve pretrained model uyumu belirleyicidir.
 
 Nesnenin başlangıç konumunu küçük aralıkta değiştir; her şeyi aynı anda değiştirme. Kamera pozlarını toplama sırasında sabit tut. Bir sonraki veri sürümünde farklı ışığı ayrı bir değişken olarak ekleyebilirsin. Başarısız denemeleri saklayacaksan etiketle; ilk başarılı-demonstrasyon BC setine sessizce katma.
 
 ## Resume ve veri sürümü
 
-Aynı şema/kalibrasyon/kamera düzeniyle kayıt eklemek için önce yardım çıktısında `--resume` davranışını kontrol et. LeRobot'ta ek episode sayısı ile toplam hedef sayısı aynı şey değildir. Kamera, birim veya görev değiştiyse yeni dataset sürümü oluştur: `so101-pick-v2`.
+Aynı şema/kalibrasyon (calibration)/kamera düzeniyle kayıt eklemek için önce yardım çıktısında `--resume` davranışını kontrol et. LeRobot'ta ek episode sayısı ile toplam hedef sayısı aynı şey değildir. Kamera, birim veya görev değiştiyse yeni dataset sürümü oluştur: `so101-pick-v2`.
 
 Ham veriyi tek kopya tutma. Yedekleme, dosya manifesti ve deney notlarını beraber sakla. Veri setini Hub'a taşımak bir seçenek; eğitim için zorunlu değil. Özellikle kameranın insanları/özel ortamı gösterdiği kayıtların görünürlüğünü yükleme sırasında bilinçli seç.
 
@@ -63,6 +63,6 @@ Ham veriyi tek kopya tutma. Yedekleme, dosya manifesti ve deney notlarını bera
 
 ## Test verisini ayır
 
-Ardışık kareleri rastgele train/test ayırma: aynı hareketin hemen yanındaki kareler iki tarafa düşebilir. Validation'ı episode bazında ayır. Son test içinse kayıt günü/başlangıç bölgesi gibi daha güçlü bir ayrım tasarla ve test koşullarını model seçimi sırasında sürekli kullanma.
+Ardışık kareleri rastgele train/test ayırma: aynı hareketin hemen yanındaki kareler iki tarafa düşebilir. doğrulama (Validation)'ı episode bazında ayır. Son test içinse kayıt günü/başlangıç bölgesi gibi daha güçlü bir ayrım tasarla ve test koşullarını model seçimi sırasında sürekli kullanma.
 
 Sonraki adım [dataset denetimi](../ogrenme/dataset.md), sonra [SmolVLA eğitimi](../ogrenme/smolvla.md).

@@ -15,9 +15,9 @@ sim.add_object(
 )
 ```
 
-Bu boyutlar kutu geometrisinin yarı boyutları olarak yorumlanır; amaç yaklaşık 4 cm kenarlı nesnedir. Merkez yüksekliğini sıfıra koymak nesneyi zemine gömebilir. Başlangıçta temas çözücüsünün büyük bir iç içe geçmeyi düzeltmesi, beklenmedik fırlama veya titreşim üretebilir.
+Bu boyutlar kutu geometrisinin yarı boyutları olarak yorumlanır; amaç yaklaşık 4 cm kenarlı nesnedir. Merkez yüksekliğini sıfıra koymak nesneyi zemine gömebilir. Başlangıçta temas (contact) çözücüsünün büyük bir iç içe geçmeyi düzeltmesi, beklenmedik fırlama veya titreşim üretebilir.
 
-Dinamik nesneye yerçekimi etki eder; masa/kap gibi sabit tutulacak nesnelerde statik seçim gerekir. Masa yüksekliği değişirse robot tabanı, nesne konumu ve kamera hedefinin de aynı dünya çerçevesine göre güncellenmesi gerekir.
+Dinamik nesneye yerçekimi (gravity) etki eder; masa/kap gibi sabit tutulacak nesnelerde statik seçim gerekir. Masa yüksekliği değişirse robot tabanı, nesne konumu ve kamera hedefinin de aynı dünya çerçevesine göre güncellenmesi gerekir.
 
 ## Kamera kur
 
@@ -37,9 +37,9 @@ Kamera adı veri setinde bir anahtara dönüşeceği için rastgele değiştirme
 
 ## Eylem gönderirken sırayı tahmin etme
 
-`sim.send_action(...)` aktüatör hedeflerini uygulayıp fizik alt adımlarını ilerletir. `sim.set_joint_positions(...)` ise kinematik konum yazma yoludur. İkisi eğitim gösterimi bakımından eşdeğer değildir.
+`sim.send_action(...)` aktüatör (actuator) hedeflerini uygulayıp fizik alt adımlarını ilerletir. `sim.set_joint_positions(...)` ise kinematik konum yazma yoludur. İkisi eğitim (training) gösterimi bakımından eşdeğer değildir.
 
-Bir eylem vektörünün altı elemanlı olması, doğru altı motoru doğru sırada temsil ettiğini göstermez. Önce `robot_action_keys("so101")` ile mevcut aktüatör sözleşmesini, `get_robot_state` ile durum isimlerini incele. Kullanılan sürümdeki metot imzasını şu şekilde görebilirsin:
+Bir eylem (action) vektörünün altı elemanlı olması, doğru altı motoru doğru sırada temsil ettiğini göstermez. Önce `robot_action_keys("so101")` ile mevcut aktüatör sözleşmesini, `get_robot_state` ile durum (state) isimlerini incele. Kullanılan sürümdeki metot imzasını şu şekilde görebilirsin:
 
 ```bash
 .venv/bin/python -c 'import inspect; from strands_robots.simulation import Simulation; print(inspect.signature(Simulation.send_action))'
@@ -51,15 +51,24 @@ Pozisyon hedefi verme denemesinde önce mevcut hedefe yakın küçük bir deği�
 
 Bir görev durum makinesi düşün:
 
-```text
-başlangıç → nesnenin üstüne git → yaklaş → tutucuyu kapat
-          → kaldır → hedef kabın üstüne git → indir → bırak → geri çekil
+```mermaid
+flowchart TD
+    accTitle: Küpü kavrayıp kaba bırakmanın aşamaları
+    accDescr: Başlangıçtan yaklaşmaya, tutucuyu kapatmaya, kaldırmaya, taşımaya ve bırakmaya ilerlenir. Bunlar uzman denetleyici tasarlamak için kavramsal aşamalardır; her geçiş ayrıca ölçümle doğrulanmalıdır.
+    A(["Başlangıç"]) --> B["Nesnenin üstüne git"]
+    B --> C["Yaklaş"]
+    C --> D["Tutucuyu kapat (close gripper)"]
+    D --> E["Kaldır (lift)"]
+    E --> F["Hedef kabın üstüne git"]
+    F --> G["İndir (lower)"]
+    G --> H["Bırak (release)"]
+    H --> I(["Geri çekil (retreat)"])
 ```
 
 Her geçişin koşulu olmalı. “100 adım geçti” tek başına tutucunun nesneyi tuttuğunu göstermez. Simde nesnenin yükselmesi, tutucuya göre göreli hareketi ve temas bilgileri incelenebilir. Kaba bırakmada nesnenin kap bölgesinde belirli süre kalması gerekir. Başarıyı script'in son satıra ulaşmasıyla ölçme.
 
-Gerçek bir scripted uzman oluşturmak için hedef pozlarını, IK'yi, eklem limitlerini, çarpışmaları ve tutucu/nesne temasını doğrulaman gerekir. Bu rehberin mock kayıt scripti bu kavrama uzmanını uygulamaz. Bu bölümdeki durum makinesi, uzman denetleyici geliştirme ödevidir; hazır başarılı pick-and-place kodu olarak sunulmaz.
+Gerçek bir scripted uzman oluşturmak için hedef pozlarını, IK'yi, eklem (joint) limitlerini, çarpışmaları ve tutucu (gripper)/nesne temasını doğrulaman gerekir. Bu rehberin mock kayıt scripti bu kavrama uzmanını uygulamaz. Bu bölümdeki durum makinesi, uzman denetleyici (controller) geliştirme ödevidir; hazır başarılı pick-and-place kodu olarak sunulmaz.
 
 ## Sahne defteri
 
-Her veri toplamada nesne kütlesi/boyutu, sürtünme, taban pozu, kamera pozu/FOV, çözünürlük, kontrol frekansı ve random seed'i kaydet. `seed` aynı olsa bile farklı fizik sürümü/asset/iş parçacığı ayarıyla bit düzeyinde aynı sonucu varsayma. Aynı sahneyi yeniden kurabilmek için parametreler ve varlık sürümü gerekir.
+Her veri toplamada nesne kütlesi/boyutu, sürtünme (friction), taban pozu, kamera pozu/FOV, çözünürlük, kontrol frekansı ve random rastgelelik tohumu (seed)'i kaydet. `seed` aynı olsa bile farklı fizik sürümü/asset/iş parçacığı ayarıyla bit düzeyinde aynı sonucu varsayma. Aynı sahneyi yeniden kurabilmek için parametreler ve varlık sürümü gerekir.

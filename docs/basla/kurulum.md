@@ -24,7 +24,7 @@ uv pip install --python .venv/bin/python -r requirements-docs.txt -r requirement
 .venv/bin/mkdocs serve --dev-addr 127.0.0.1:8000
 ```
 
-`uv` Python 3.12 bulamazsa bu sürümü indirmeyi önerebilir. Bu rehberin denenen tabanı Python **3.12**'dir; bilgisayarındaki 3.14'ü kullanarak aynı sonucu varsayma. macOS/Linux komutları verilmiştir. Windows için sim/eğitim tarafında Linux ortamı ayrı değerlendirilir; USB donanımını WSL'ye aktarmak ek kurulum gerektirir ve burada sınanmadı.
+`uv` Python 3.12 bulamazsa bu sürümü indirmeyi önerebilir. Bu rehberin denenen tabanı Python **3.12**'dir; bilgisayarındaki 3.14'ü kullanarak aynı sonucu varsayma. macOS/Linux komutları verilmiştir. Windows için sim/eğitim (training) tarafında Linux ortamı ayrı değerlendirilir; USB donanımını WSL'ye aktarmak ek kurulum gerektirir ve burada sınanmadı.
 
 ## 3. Gerçek fizik motorunu çalıştır
 
@@ -60,7 +60,7 @@ MuJoCo'nun macOS pasif görüntüleyicisi ana iş parçacığı için `mjpython`
 
 macOS'ta canlı kol penceresi: `.venv/bin/mjpython examples/02_strands_so101.py --viewer --steps 900`.
 
-İlk kullanımda SO-101 model dosyaları internetten indirilir. Sonraki kullanım yerel önbellekten yararlanır. Beklenen çıktılar: robot eklem durumu, rollout sonucu ve `outputs/so101_before.png`, `outputs/so101_after.png`. Bunları yan yana aç. Robot hareket etmiş olabilir; küpü kavraması beklenmez, çünkü politika `mock`.
+İlk kullanımda SO-101 model dosyaları internetten indirilir. Sonraki kullanım yerel önbellekten yararlanır. Beklenen çıktılar: robot eklem (joint) durumu, politika yürütümü (rollout) sonucu ve `outputs/so101_before.png`, `outputs/so101_after.png`. Bunları yan yana aç. Robot hareket etmiş olabilir; küpü kavraması beklenmez, çünkü politika (policy) `mock`.
 
 İndirme başarısızsa “model yok” hatasını bir kinematik hatası sanma; önce ilk GitHub/ağ hatasını oku. Script model yüklenemediğinde başka robotu sessizce onun yerine koymaz.
 
@@ -84,8 +84,8 @@ CUDA makinesinde önce [GPU kurulum notlarını](../ogrenme/hesaplama.md) oku. P
 | `examples/` | Çalıştırılabilir Python alıştırmaları |
 | `requirements-*.txt` | Doğrulanan ana bağımlılık sürümleri |
 | `constraints-*.txt` | Bu makinedeki tam paket dökümü; platforma özel referans |
-| `data/` | Yerel episode verileri; sürüm kontrolüne girmez |
-| `outputs/` | PNG, CSV, eğitim komutu, rapor ve checkpoint çıktıları |
+| `data/` | Yerel bölüm (episode) verileri; sürüm kontrolüne girmez |
+| `outputs/` | PNG, CSV, eğitim komutu, rapor ve kontrol noktası (checkpoint) çıktıları |
 | `.cache/` | Scriptlerin model/varlık önbellekleri |
 | `site/` | `make build` ile üretilen statik site |
 

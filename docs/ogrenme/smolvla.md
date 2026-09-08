@@ -2,14 +2,14 @@
 
 Komutun içindeki hesapları da anlamak için [modelin iç yapısı ve çözümlü flow matching](smolvla-ic-yapi.md), [veri pencereleri ve padding](veri-muhendisligi.md), [eğitimi kontrollü deney olarak yürütme](egitim-deneyleri.md) bölümlerini birlikte oku.
 
-Bu bölümün hedefi `lerobot/smolvla_base` başlangıç modelini kendi SO-101 gösterimlerine uyarlamak. Robotu henüz bekliyorsan sim smoke verisiyle komut üretimini, hazır kaliteli bir dataset ile eğitim hazırlığını öğrenebilirsin. Gerçek görev başarısı için gösterim kalitesi ve değerlendirme gerekir.
+Bu bölümün hedefi `lerobot/smolvla_base` başlangıç modelini kendi SO-101 gösterimlerine uyarlamak. Robotu henüz bekliyorsan sim smoke verisiyle komut üretimini, hazır kaliteli bir veri kümesi (dataset) ile eğitim (training) hazırlığını öğrenebilirsin. Gerçek görev başarısı için gösterim (demonstration) kalitesi ve değerlendirme gerekir.
 
 !!! info "Bu bilgisayarda doğrulanan sınır"
-    Ortam kurulumu, LeRobot veri kaydı/okuma, şema dönüşümü ve eğitim komutu hazırlığı doğrulandı. SmolVLA ağırlıkları indirilerek tam fine-tuning çalıştırılmadı; GPU eğitimi veya fiziksel görev başarısı tamamlandı diye sunulmuyor. [Tam doğrulama kaydı](../basla/dogrulama.md).
+    Ortam kurulumu, LeRobot veri kaydı/okuma, şema dönüşümü ve eğitim komutu hazırlığı doğrulandı. SmolVLA ağırlıkları indirilerek tam ince ayar (fine-tuning) çalıştırılmadı; GPU eğitimi veya fiziksel görev başarısı tamamlandı diye sunulmuyor. [Tam doğrulama kaydı](../basla/dogrulama.md).
 
 ## 1. Ön koşullar
 
-Veri setinin metadata/parquet denetimi geçmeli; videolar açılmalı. En az bir gerçek kamera ve altı boyutlu SO-101 state/action şeması beklenir. Gerçek veri ile sim verisinin eylem birimleri farklıysa önce ortak temsil/eşleme tasarlanır.
+Veri setinin üstveri (metadata)/parquet denetimi geçmeli; videolar açılmalı. En az bir gerçek kamera ve altı boyutlu SO-101 durum (state)/action şeması beklenir. Gerçek veri ile sim verisinin eylem (action) birimleri farklıysa önce ortak temsil/eşleme tasarlanır.
 
 Normal eğitim hedefi Linux + NVIDIA CUDA; Mac/MPS ve CPU küçük uyumluluk denemeleri için ayrıca ele alınır. Model/bağımlılık indirmesi internet, eğitim ise yeterli bellek ve disk ister. Bu sayfadaki komutlar otomatik ücretli bulut işi veya Hub yüklemesi başlatmaz.
 
@@ -23,7 +23,7 @@ python examples/04_inspect_dataset.py data/so101-pick-v1
 
 Base modelin yayımlanan config'inde `observation.images.camera1`, `camera2`, `camera3` girişleri bulunur; senin verin `front` ve `wrist` olabilir. Aynı çözünürlükte olmaları isim uyuşmazlığını çözmez. [SmolVLA base config](https://huggingface.co/lerobot/smolvla_base/blob/main/config.json)
 
-İki yaklaşım vardır. `rename_map` ile mevcut anahtarları checkpoint'in beklediği anahtarlara eşleyebilirsin. Ya da bu görev için giriş feature'larını gerçekten kaydettiğin kamera adlarıyla açık tanımlarsın. Bu atölyenin **komut üreticisi ikinci yolu** kullanır: metadata'dan `policy.input_features` üretir, olmayan üçüncü kamerayı varmış gibi bırakmaz.
+İki yaklaşım vardır. `rename_map` ile mevcut anahtarları kontrol noktası (checkpoint)'in beklediği anahtarlara eşleyebilirsin. Ya da bu görev için giriş feature'larını gerçekten kaydettiğin kamera adlarıyla açık tanımlarsın. Bu atölyenin **komut üreticisi ikinci yolu** kullanır: metadata'dan `policy.input_features` üretir, olmayan üçüncü kamerayı varmış gibi bırakmaz.
 
 Örnek çıktı:
 
@@ -35,7 +35,7 @@ Base modelin yayımlanan config'inde `observation.images.camera1`, `camera2`, `c
 }
 ```
 
-Bu şema eğitim ve runtime için sözleşme olur. Fotoğrafın çözünürlüğü ile model içindeki resize/padding boyutu aynı şey değildir. `empty_cameras` her yanlış isimli kamera girdisini sihirli biçimde onarmaz; bu tarifte gerçek girişler açıkça belirlendiği için `0` seçilir. [Rename map ve empty camera açıklaması](https://huggingface.co/docs/lerobot/en/rename_map)
+Bu şema eğitim ve runtime için sözleşme olur. Fotoğrafın çözünürlüğü ile model içindeki resize/doldurma (padding) boyutu aynı şey değildir. `empty_cameras` her yanlış isimli kamera girdisini sihirli biçimde onarmaz; bu tarifte gerçek girişler açıkça belirlendiği için `0` seçilir. [Rename map ve empty camera açıklaması](https://huggingface.co/docs/lerobot/en/rename_map)
 
 ## 3. Önce kısa eğitim komutu üret
 
@@ -77,7 +77,7 @@ python examples/05_prepare_training.py \
 bash outputs/commands/smolvla-pick-v1.sh
 ```
 
-20.000 adım ve batch 8 burada başlangıç deneyidir; önerilen son optimum veya her GPU'da bellek garantisi değildir. `num_workers=0` ilk denemede hata görünürlüğünü artırır; veri yükleme darboğazı ölçülürse Linux'ta kademeli artır. `dataset.video_backend=pyav` seçimi bu atölyenin doğruladığı okuma yoludur.
+20.000 adım ve örnek grubu (batch) 8 burada başlangıç deneyidir; önerilen son optimum veya her GPU'da bellek garantisi değildir. `num_workers=0` ilk denemede hata görünürlüğünü artırır; veri yükleme darboğazı ölçülürse Linux'ta kademeli artır. `dataset.video_backend=pyav` seçimi bu atölyenin doğruladığı okuma yoludur.
 
 Üretici yerel dataset ve çıktı yollarını mutlak yazar. Komutu Mac'ten Linux'a kopyalarsan yollar yanlış olabilir; hedef makinede aynı script ile yeniden üret.
 
@@ -89,9 +89,9 @@ bash outputs/commands/smolvla-pick-v1.sh
 | `train_expert_only=true` | Action expert odaklı fine-tuning seçimi |
 | `freeze_vision_encoder=true` | Görsel encoder güncellemelerini dondurma seçimi |
 | `train_state_proj=true` | State projeksiyonunun eğitimini açar |
-| `steps` | Optimizer güncelleme sayısı; episode sayısı değildir |
+| `steps` | eniyileyici (Optimizer) güncelleme sayısı; bölüm (episode) sayısı değildir |
 | `batch_size` | Güncellemedeki örnek sayısı; bellek/zamanı etkiler |
-| `dataset.eval_split` | Episode bazlı validation payı |
+| `dataset.eval_split` | Episode bazlı doğrulama (validation) payı |
 | `eval_steps` | Validation loss hesap sıklığı |
 | `save_freq` | Checkpoint kayıt sıklığı |
 | `policy.push_to_hub=false` | Eğitim sonunda otomatik Hub yüklemesini kapatır |
@@ -101,19 +101,19 @@ bash outputs/commands/smolvla-pick-v1.sh
 
 ## 5. Eğitim loglarını oku
 
-Önce loss'un sonlu olduğunu, batch'in doğru kameraları içerdiğini ve adımların ilerlediğini gör. Eğitim kaybı düşerken validation yükseliyorsa aşırı uyum veya veri ayrımı etkisi olabilir. İkisi de kötü ise yanlış şema, görev karışıklığı, action birimi ve veri kalitesini kontrol et.
+Önce loss'un sonlu olduğunu, batch'in doğru kameraları içerdiğini ve adımların ilerlediğini gör. Eğitim kaybı düşerken validation yükseliyorsa aşırı uyum (overfitting) veya veri ayrımı etkisi olabilir. İkisi de kötü ise yanlış şema, görev karışıklığı, action birimi ve veri kalitesini kontrol et.
 
 Adım süresinin büyük kısmı veri yüklemeyse GPU'yu büyütmek tek başına çözüm olmayabilir. GPU utilization, bellek ve veri okuma süresini birlikte izle. İlk sıcak başlangıç ve model indirmesini kararlı adım süresine karıştırma.
 
 ## 6. Checkpoint nerede?
 
-LeRobot eğitim çıktısında `checkpoints/` altında adım klasörleri ve son checkpoint bağlantısı bulunur. Politika klasörü genellikle:
+LeRobot eğitim çıktısında `checkpoints/` altında adım klasörleri ve son checkpoint bağlantısı bulunur. Politika (policy) klasörü genellikle:
 
 ```text
 outputs/train/smolvla-pick-v1/checkpoints/last/pretrained_model/
 ```
 
-`config.json`, ağırlıklar, ön/son işlemci tanımları ve normalizasyon bilgilerini birlikte sakla. Tek `model.safetensors` dosyasını alıp bütün rollout bağlamı taşınmış gibi düşünme. **Tam resume** için optimizer/scheduler/RNG durumunu içeren eğitim checkpoint'i de gerekir.
+`config.json`, ağırlıklar (weights), ön/son işlemci tanımları ve normalizasyon (normalization) bilgilerini birlikte sakla. Tek `model.safetensors` dosyasını alıp bütün politika yürütümü (rollout) bağlamı taşınmış gibi düşünme. **Tam resume** için optimizer/öğrenme oranı zamanlayıcısı (scheduler)/RNG durumunu içeren eğitim checkpoint'i de gerekir.
 
 ```bash
 lerobot-train \

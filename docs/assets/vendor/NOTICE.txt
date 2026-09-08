@@ -1,0 +1,6 @@
+Mermaid 11.17.2
+Source: https://cdn.jsdelivr.net/npm/mermaid@11.17.2/dist/mermaid.min.js
+Project: https://github.com/mermaid-js/mermaid
+License: MIT; see mermaid-LICENSE.txt
+SHA-256: 581ed7d74bd9048d0e3a91363927d72ef22942d7722546b27f7cc29e35390eb8
+The unmodified browser bundle is served locally for offline diagram rendering.

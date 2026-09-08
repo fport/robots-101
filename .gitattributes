@@ -1,0 +1,2 @@
+# Keep the upstream minified bundle byte-for-byte; review its version/checksum in NOTICE.txt.
+docs/assets/vendor/*.min.js -text -diff -whitespace linguist-vendored

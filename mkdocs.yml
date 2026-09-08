@@ -1,5 +1,5 @@
 site_name: SO-101 Atölyesi
-site_description: Robot gelmeden başla. MuJoCo, Strands Robots, LeRobot ve SmolVLA ile Türkçe uygulamalı robotik rehberi.
+site_description: Sıfırdan robotik. MuJoCo, Strands Robots, LeRobot ve SmolVLA ile Türkçe ve İngilizce uygulamalı atölye.
 site_author: SO-101 Atölyesi
 docs_dir: docs
 site_dir: site
@@ -11,93 +11,184 @@ theme:
   logo: assets/arm.svg
   favicon: assets/arm.svg
   palette:
-    - scheme: slate
-      primary: custom
-      accent: custom
-      toggle:
-        icon: material/weather-sunny
-        name: Açık temaya geç
-    - scheme: default
-      primary: custom
-      accent: custom
-      toggle:
-        icon: material/weather-night
-        name: Koyu temaya geç
+  - scheme: slate
+    primary: custom
+    accent: custom
+    toggle:
+      icon: material/weather-sunny
+      name: Açık temaya geç
+  - scheme: default
+    primary: custom
+    accent: custom
+    toggle:
+      icon: material/weather-night
+      name: Koyu temaya geç
   features:
-    - navigation.tabs
-    - navigation.sections
-    - navigation.indexes
-    - navigation.top
-    - navigation.footer
-    - content.code.copy
-    - search.suggest
-    - search.highlight
+  - navigation.tabs
+  - navigation.sections
+  - navigation.indexes
+  - navigation.top
+  - navigation.footer
+  - content.code.copy
+  - search.suggest
+  - search.highlight
 plugins:
-  - search:
-      lang: [tr, en]
+- search:
+    lang:
+    - tr
+    - en
+- i18n:
+    docs_structure: suffix
+    fallback_to_default: true  # Shared image assets; check_content.py requires every English chapter.
+    languages:
+    - locale: tr
+      default: true
+      name: Türkçe
+      build: true
+    - locale: en
+      name: English
+      build: true
+      site_name: SO-101 Workshop
+      site_description: Learn robotics from zero with MuJoCo, Strands Robots, LeRobot datasets and SmolVLA.
+      theme:
+        language: en
+        palette:
+        - scheme: slate
+          primary: custom
+          accent: custom
+          toggle:
+            icon: material/weather-sunny
+            name: Switch to light mode
+        - scheme: default
+          primary: custom
+          accent: custom
+          toggle:
+            icon: material/weather-night
+            name: Switch to dark mode
+      nav_translations:
+        Başla: Start here
+        Atölye: Workshop
+        Tamamen sıfırdan başla: Start from zero
+        Öğrenme rotası: Learning route
+        Ne kadarını bilmeliyim?: How much should I know?
+        Kurulum ve ilk 30 dakika: Setup and first 30 minutes
+        Bu rehberin doğrulama durumu: Validation record
+        Robotik temeli: Robotics foundations
+        SO-101 donanım rehberi: SO-101 hardware guide
+        Koordinatlar ve kontrol: Coordinates and control
+        Kinematik ve ters kinematik: Forward and inverse kinematics
+        Yazılım haritası: Software map
+        İnteraktif laboratuvar: Interactive lab
+        Simülasyon: Simulation
+        Sıfırdan fizik dünyası kur: Build a physics world
+        MuJoCo'yu anlamak: Understanding MuJoCo
+        MuJoCo ile 10 deney: Ten MuJoCo experiments
+        Strands ile SO-101: SO-101 with Strands
+        Sahne, kamera ve hareket: Scene, cameras and motion
+        Ölçülen durumla hedef takibi: Measured-state target tracking
+        Gösterim üretimi ve kayıt: Demonstrations and recording
+        Simülasyondan gerçeğe: Simulation to reality
+        Robot gelince: When your robot arrives
+        İlk açılış ve kalibrasyon: First power-on and calibration
+        Teleoperasyon ve kameralar: Teleoperation and cameras
+        Kamera geometrisi ve kalibrasyon: Camera geometry and calibration
+        Kaliteli veri toplama: Collecting useful data
+        Öğrenme ve VLA: Learning and VLA
+        İlk öğrenme döngün: Your first learning loop
+        Hugging Face verisini kullan: Use Hugging Face datasets
+        Kendi verini üret: Produce your own data
+        Taklit öğrenme, ACT ve VLA: Imitation learning, ACT and VLA
+        LeRobot veri setini okumak: Reading LeRobot datasets
+        Veri mühendisliği ve zaman: Data engineering and timing
+        SmolVLA eğitimi: SmolVLA fine-tuning
+        SmolVLA'nın iç yapısı: SmolVLA internals
+        Eğitimi deney olarak yürütmek: Training as an experiment
+        GPU ve bulut çalışma düzeni: GPU and cloud workflow
+        Değerlendirme ve çalıştırma: Evaluation and execution
+        Strands ajanı ile birleştirme: Connecting a Strands agent
+        İleri çalışmalar ve RL: Advanced work and RL
+        Uygulama defteri: Practice notebook
+        Uygulamalı laboratuvarlar: Practical labs
+        16 çözümlü soru: 16 worked questions
+        Bitirme projesi: Capstone project
+        Sorun giderme: Troubleshooting
+        Komut defteri: Command notebook
+        Sözlük: Glossary
+        Kaynaklar ve sürümler: Sources and versions
 markdown_extensions:
-  - admonition
-  - attr_list
-  - md_in_html
-  - tables
-  - footnotes
-  - toc:
-      permalink: true
-  - pymdownx.details
-  - pymdownx.highlight:
-      anchor_linenums: true
-  - pymdownx.superfences
-  - pymdownx.tabbed:
-      alternate_style: true
-  - pymdownx.tasklist:
-      custom_checkbox: true
-  - pymdownx.arithmatex:
-      generic: true
+- admonition
+- attr_list
+- md_in_html
+- tables
+- footnotes
+- toc:
+    permalink: true
+- pymdownx.details
+- pymdownx.highlight:
+    anchor_linenums: true
+- pymdownx.superfences:
+    custom_fences:
+    - name: mermaid
+      class: workshop-diagram
+      format: !!python/name:pymdownx.superfences.fence_code_format
+- pymdownx.tabbed:
+    alternate_style: true
+- pymdownx.tasklist:
+    custom_checkbox: true
+- pymdownx.arithmatex:
+    generic: true
 extra_css:
-  - assets/styles.css
+- assets/styles.css
 extra_javascript:
-  - assets/lab.js
+- assets/lab.js
+- assets/diagrams.js
 nav:
-  - Başla:
-      - Atölye: index.md
-      - Öğrenme rotası: basla/rota.md
-      - Ne kadarını bilmeliyim?: basla/derinlik.md
-      - Kurulum ve ilk 30 dakika: basla/kurulum.md
-      - Bu rehberin doğrulama durumu: basla/dogrulama.md
-  - Robotik temeli:
-      - SO-101 donanım rehberi: temel/so101.md
-      - Koordinatlar ve kontrol: temel/robotik.md
-      - Kinematik ve ters kinematik: temel/kinematik-ik.md
-      - Yazılım haritası: temel/yigin.md
-      - İnteraktif laboratuvar: temel/laboratuvar.md
-  - Simülasyon:
-      - MuJoCo'yu anlamak: simulasyon/mujoco.md
-      - Strands ile SO-101: simulasyon/strands.md
-      - Sahne, kamera ve hareket: simulasyon/sahne.md
-      - Ölçülen durumla hedef takibi: simulasyon/denetleyici.md
-      - Gösterim üretimi ve kayıt: simulasyon/veri.md
-      - Simülasyondan gerçeğe: simulasyon/sim2real.md
-  - Robot gelince:
-      - İlk açılış ve kalibrasyon: donanim/ilk-acilis.md
-      - Teleoperasyon ve kameralar: donanim/teleop.md
-      - Kamera geometrisi ve kalibrasyon: donanim/kamera-kalibrasyonu.md
-      - Kaliteli veri toplama: donanim/veri.md
-  - Öğrenme ve VLA:
-      - Taklit öğrenme, ACT ve VLA: ogrenme/temeller.md
-      - LeRobot veri setini okumak: ogrenme/dataset.md
-      - Veri mühendisliği ve zaman: ogrenme/veri-muhendisligi.md
-      - SmolVLA eğitimi: ogrenme/smolvla.md
-      - SmolVLA'nın iç yapısı: ogrenme/smolvla-ic-yapi.md
-      - Eğitimi deney olarak yürütmek: ogrenme/egitim-deneyleri.md
-      - GPU ve bulut çalışma düzeni: ogrenme/hesaplama.md
-      - Değerlendirme ve çalıştırma: ogrenme/degerlendirme.md
-      - Strands ajanı ile birleştirme: ogrenme/ajan.md
-      - İleri çalışmalar ve RL: ogrenme/ileri.md
-  - Uygulama defteri:
-      - Uygulamalı laboratuvarlar: pratik/lablar.md
-      - 16 çözümlü soru: pratik/cozumlu-sorular.md
-      - Bitirme projesi: pratik/proje.md
-      - Sorun giderme: pratik/sorunlar.md
-      - Komut defteri: pratik/komutlar.md
-      - Sözlük: pratik/sozluk.md
-      - Kaynaklar ve sürümler: kaynaklar.md
+- Başla:
+  - Atölye: index.md
+  - Tamamen sıfırdan başla: basla/sifirdan.md
+  - Öğrenme rotası: basla/rota.md
+  - Ne kadarını bilmeliyim?: basla/derinlik.md
+  - Kurulum ve ilk 30 dakika: basla/kurulum.md
+  - Bu rehberin doğrulama durumu: basla/dogrulama.md
+- Robotik temeli:
+  - SO-101 donanım rehberi: temel/so101.md
+  - Koordinatlar ve kontrol: temel/robotik.md
+  - Kinematik ve ters kinematik: temel/kinematik-ik.md
+  - Yazılım haritası: temel/yigin.md
+  - İnteraktif laboratuvar: temel/laboratuvar.md
+- Simülasyon:
+  - Sıfırdan fizik dünyası kur: simulasyon/sifirdan.md
+  - MuJoCo'yu anlamak: simulasyon/mujoco.md
+  - MuJoCo ile 10 deney: simulasyon/deneyler.md
+  - Strands ile SO-101: simulasyon/strands.md
+  - Sahne, kamera ve hareket: simulasyon/sahne.md
+  - Ölçülen durumla hedef takibi: simulasyon/denetleyici.md
+  - Gösterim üretimi ve kayıt: simulasyon/veri.md
+  - Simülasyondan gerçeğe: simulasyon/sim2real.md
+- Robot gelince:
+  - İlk açılış ve kalibrasyon: donanim/ilk-acilis.md
+  - Teleoperasyon ve kameralar: donanim/teleop.md
+  - Kamera geometrisi ve kalibrasyon: donanim/kamera-kalibrasyonu.md
+  - Kaliteli veri toplama: donanim/veri.md
+- Öğrenme ve VLA:
+  - İlk öğrenme döngün: ogrenme/ilk-ogrenme.md
+  - Hugging Face verisini kullan: ogrenme/huggingface.md
+  - Kendi verini üret: ogrenme/veri-uretimi.md
+  - Taklit öğrenme, ACT ve VLA: ogrenme/temeller.md
+  - LeRobot veri setini okumak: ogrenme/dataset.md
+  - Veri mühendisliği ve zaman: ogrenme/veri-muhendisligi.md
+  - SmolVLA eğitimi: ogrenme/smolvla.md
+  - SmolVLA'nın iç yapısı: ogrenme/smolvla-ic-yapi.md
+  - Eğitimi deney olarak yürütmek: ogrenme/egitim-deneyleri.md
+  - GPU ve bulut çalışma düzeni: ogrenme/hesaplama.md
+  - Değerlendirme ve çalıştırma: ogrenme/degerlendirme.md
+  - Strands ajanı ile birleştirme: ogrenme/ajan.md
+  - İleri çalışmalar ve RL: ogrenme/ileri.md
+- Uygulama defteri:
+  - Uygulamalı laboratuvarlar: pratik/lablar.md
+  - 16 çözümlü soru: pratik/cozumlu-sorular.md
+  - Bitirme projesi: pratik/proje.md
+  - Sorun giderme: pratik/sorunlar.md
+  - Komut defteri: pratik/komutlar.md
+  - Sözlük: pratik/sozluk.md
+  - Kaynaklar ve sürümler: kaynaklar.md

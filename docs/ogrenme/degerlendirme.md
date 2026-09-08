@@ -1,18 +1,18 @@
 # Değerlendirme ve çalıştırma
 
-Modelin dosyaya kaydedilmesi öğrenilmiş görevin çalıştığını kanıtlamaz. Önce giriş/çıkış sözleşmesini, sonra inference gecikmesini ve en son görev başarısını sınarsın.
+Modelin dosyaya kaydedilmesi öğrenilmiş görevin çalıştığını kanıtlamaz. Önce giriş/çıkış sözleşmesini, sonra çıkarım (inference) gecikmesini ve en son görev başarısını sınarsın.
 
 ## Başarı tanımını önce yaz
 
-Bu atölye için örnek görev tanımı: “Nesne başlangıç bölgesinden kaldırılacak, kaba bırakılacak, tutucu geri çekildikten sonra kapta iki saniye kalacak ve bütün işlem 25 saniye içinde bitecek.” Bunlar önerilen deney sınırlarıdır; görevüne göre değiştir ve test başlamadan sabitle.
+Bu atölye için örnek görev tanımı: “Nesne başlangıç bölgesinden kaldırılacak, kaba bırakılacak, tutucu (gripper) geri çekildikten sonra kapta iki saniye kalacak ve bütün işlem 25 saniye içinde bitecek.” Bunlar önerilen deney sınırlarıdır; görevine göre değiştir ve test başlamadan sabitle.
 
 Başarıyı şu işaretlerle karıştırma: motor hareket etti, script hata vermedi, inference 30 kere çağrıldı, kol kabın üstüne geldi. Her biri ayrı sistem ölçütüdür.
 
 ## Önce inference sözleşmesi
 
-Checkpoint'in `config.json` dosyasındaki kamera adlarını ve state/action boyutlarını oku. Kalibrasyon ID'si, `use_degrees`, görüntü yerleşimi ve kontrol FPS eğitimdeki sözleşmeyle eşleşsin. Ön/son işlemci dosyalarını checkpoint'le birlikte kullan; normalize ağ çıktısını doğrudan motor hedefine verme.
+kontrol noktası (Checkpoint)'in `config.json` dosyasındaki kamera adlarını ve durum (state)/eylem (action) boyutlarını oku. Kalibrasyon (calibration) ID'si, `use_degrees`, görüntü yerleşimi ve kontrol FPS eğitimdeki sözleşmeyle eşleşsin. Ön/son işlemci dosyalarını checkpoint'le birlikte kullan; normalize ağ çıktısını doğrudan motor hedefine verme.
 
-Bir policy simde radyan eylemle eğitildiyse gerçek follower'ın normalize komut aralığına kendiliğinden uyduğunu varsayma. [Sim2real sözleşme kontrolü](../simulasyon/sim2real.md) tamamlanmadan gerçek transfer sonuçları yorumlanamaz.
+Bir politika (policy) simde radyan eylemle eğitildiyse gerçek follower'ın normalize komut aralığına kendiliğinden uyduğunu varsayma. [Sim2real sözleşme kontrolü](../simulasyon/sim2real.md) tamamlanmadan gerçek transfer sonuçları yorumlanamaz.
 
 ## Gerçek kol için kısa rollout tarifi
 
@@ -37,7 +37,7 @@ lerobot-rollout \
   --duration=5
 ```
 
-Mac örneğinde `device=mps` seçildi; uygun olmayan makinede `cpu` veya NVIDIA makinede `cuda` kullan. Bu cihazlarda gerçek zamanlı inference ölçülmedi. Modelin tek ileri geçişi hedef kontrol aralığından uzunsa senkron rollout yavaşlayabilir. Görsel/durum sözleşmesini doğruladıktan sonra gerçek süreyi ölç ve ilgili inference stratejisini seç. [LeRobot politika çalıştırma](https://huggingface.co/docs/lerobot/en/inference)
+Mac örneğinde `device=mps` seçildi; uygun olmayan makinede `cpu` veya NVIDIA makinede `cuda` kullan. Bu cihazlarda gerçek zamanlı inference ölçülmedi. Modelin tek ileri geçişi hedef kontrol aralığından uzunsa senkron politika yürütümü (rollout) yavaşlayabilir. Görsel/durum sözleşmesini doğruladıktan sonra gerçek süreyi ölç ve ilgili inference stratejisini seç. [LeRobot politika çalıştırma](https://huggingface.co/docs/lerobot/en/inference)
 
 ## Simde SmolVLA çalıştırma
 
@@ -82,6 +82,6 @@ Araç başarı oranını, başarısızlık dağılımını ve Wilson %95 aralı�
 
 ## İlk sonuç iyi değilse
 
-**Hareket anlamsız:** action birimi/sırası ve stats. **Nesneyi ıskalıyor:** görüş, kalibrasyon, veri kapsamı. **Bırakmayı öğrenmiyor:** episode sonları/başarı gösterimi. **Birkaç adım sonra dağılıyor:** training dışı state, eylem ufku, toparlama eksikliği.
+**Hareket anlamsız:** action birimi/sırası ve stats. **Nesneyi ıskalıyor:** görüş, kalibrasyon, veri kapsamı. **Bırakmayı öğrenmiyor:** bölüm (episode) sonları/başarı gösterimi. **Birkaç adım sonra dağılıyor:** training dışı state, eylem ufku, toparlama eksikliği.
 
-İkinci deneyde tek şeyi değiştir. Yeni veriyi eski veriyle karıştırmadan önce sürümle. Checkpoint seçmek için kullanılan validation ile son rapor testini birbirinden ayır.
+İkinci deneyde tek şeyi değiştir. Yeni veriyi eski veriyle karıştırmadan önce sürümle. Checkpoint seçmek için kullanılan doğrulama (validation) ile son rapor testini birbirinden ayır.

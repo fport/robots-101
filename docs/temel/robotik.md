@@ -1,14 +1,14 @@
 # Koordinatlar ve kontrol
 
-Bir kolu kontrol etmek için üç soruyu ayır: “hangi pozu istiyorum?”, “bu poz için hangi eklemler nerede olmalı?” ve “motorlar o hedefe nasıl yaklaşmalı?”. İlk soru görev, ikincisi kinematik, üçüncüsü kontroldür.
+Bir kolu kontrol etmek için üç soruyu ayır: “hangi pozu istiyorum?”, “bu poz için hangi eklemler (joints) nerede olmalı?” ve “motorlar o hedefe nasıl yaklaşmalı?”. İlk soru görev, ikincisi kinematik, üçüncüsü kontroldür.
 
 ## Eklemler ve uç nokta
 
-Eklem vektörünü `q = [q1, q2, q3, q4, q5, gripper]` diye yazabiliriz. Bu, altı sayının aynı fiziksel birimde olduğu anlamına gelmez. Döner eklem radyan/derece ya da normalize aralıkta, tutucu da ayrı bir normalize aralıkta temsil edilebilir.
+Eklem (joint) vektörünü `q = [q1, q2, q3, q4, q5, gripper]` diye yazabiliriz. Bu, altı sayının aynı fiziksel birimde olduğu anlamına gelmez. Döner eklem radyan/derece ya da normalize aralıkta, tutucu (gripper) da ayrı bir normalize aralıkta temsil edilebilir.
 
-**İleri kinematik (FK):** eklem değerlerinden uç noktanın konumunu hesaplama. **Ters kinematik (IK):** istenen uç konumundan uygun eklem değerlerini bulma. IK'nin birden çok çözümü veya hiç çözümü olabilir. Eklem limitleri, yaklaşım açısı ve engeller çözüm seçiminde etkilidir.
+**İleri kinematik (forward kinematics, FK):** eklem değerlerinden uç noktanın konumunu hesaplama. **Ters kinematik (inverse kinematics, IK):** istenen uç konumundan uygun eklem değerlerini bulma. IK'nin birden çok çözümü veya hiç çözümü olabilir. Eklem limitleri, yaklaşım açısı ve engeller çözüm seçiminde etkilidir.
 
-İki boyutlu, iki eklemli bir eğitim kolunda:
+İki boyutlu, iki eklemli bir öğretim kolunda (teaching arm):
 
 ```text
 x = L1*cos(q1) + L2*cos(q1 + q2)
@@ -19,7 +19,7 @@ y = L1*sin(q1) + L2*sin(q1 + q2)
 
 ## Referans çerçevesi
 
-`x=0.2, y=0.1, z=0.05` yazdığında “hangi koordinat sisteminde?” sorusu cevaplanmış olmalı. Dünya/masa, robot tabanı, tutucu ve kamera ayrı çerçevelerdir. Kamera görüntüsündeki piksel konumu metre değildir. Bir pikseli dünyadaki noktaya taşımak kamera kalibrasyonu, derinlik veya bilinen bir yüzey varsayımı gerektirir.
+`x=0.2, y=0.1, z=0.05` yazdığında “hangi koordinat (coordinate) sisteminde?” sorusu cevaplanmış olmalı. Dünya/masa, robot tabanı, tutucu ve kamera ayrı çerçevelerdir. Kamera görüntüsündeki piksel konumu metre değildir. Bir pikseli dünyadaki noktaya taşımak kamera kalibrasyonu, derinlik veya bilinen bir yüzey varsayımı gerektirir.
 
 Homojen dönüşümün `T_world_camera` gibi bir adı, yönünü açıklar: kameradaki bir noktanın dünya koordinatını elde etmek için kullanılır. Dönüşümün tersini yanlış yerde kullanmak, işaret hatası gibi görünen büyük konum hataları üretir. Matrisin yanı sıra birim, eksen yönleri ve dönüş sırası da yazılmalıdır.
 
@@ -35,7 +35,7 @@ Hedef anında gerçekleşmez. Motor gecikmesi, yük ve kontrol döngüsü araya 
 
 ## Birimler
 
-| Gösterim | Örnek | Yanlış varsayım |
+| Gösterim biçimi (representation) | Örnek | Yanlış varsayım |
 |---|---|---|
 | Metre | `0.10` = 10 cm | `10` yazıp 10 cm beklemek |
 | Radyan | π/2 ≈ 1.571 = 90° | `90`'ı radyan olarak göndermek |
@@ -47,12 +47,12 @@ MuJoCo model tanımındaki açılar `compiler` ayarına bağlı olabilir; runtim
 
 ## Üç zaman ölçeği
 
-Fizik adımı örneğin `0.002 s` ise motor 500 fizik adımı/s çalışır. Kontrol hedefini 30 Hz'de güncellemek yaklaşık her `0.0333 s`'de yeni action anlamına gelir. Kamera ise başka FPS'te çekiyor olabilir. Bunlar aynı sayaç değildir.
+Fizik adımı örneğin `0.002 s` ise motor 500 fizik adımı/s çalışır. Kontrol hedefini 30 Hz'de güncellemek yaklaşık her `0.0333 s`'de yeni eylem (action) anlamına gelir. Kamera ise başka FPS'te çekiyor olabilir. Bunlar aynı sayaç değildir.
 
-`0.0333 / 0.002 = 16.67`; tam sayı olmayan oranlarda simülatörün alt adım zamanlamasını kontrol et. `step(30)` otomatik olarak bir saniye demek değildir. Veri setinin `fps` değeri kaydedilen kontrol örneklerinin zamanını temsil etmelidir.
+`0.0333 / 0.002 = 16.67`; tam sayı olmayan oranlarda simülatörün alt adım zamanlamasını kontrol et. `step(30)` otomatik olarak bir saniye demek değildir. Veri setinin (dataset) `fps` değeri kaydedilen kontrol örneklerinin zamanını temsil etmelidir.
 
 ## Basit kapalı döngü
 
-Bir pozisyon kontrolcü, `hata = hedef - ölçüm` ilişkisini kullanır. P kontrol büyüyen hataya daha büyük düzeltme üretir. D terimi hareketi sönümleyebilir. Kazançları yükseltmek her zaman daha iyi sonuç vermez; salınım ve temas kuvveti artabilir. Önce [tek eklem deneyinde](../simulasyon/mujoco.md) hedefi değiştirip zaman cevabını incele.
+Bir pozisyon kontrolcü, `hata = hedef - ölçüm` ilişkisini kullanır. P kontrol büyüyen hataya daha büyük düzeltme üretir. D terimi hareketi sönümleyebilir. Kazançları yükseltmek her zaman daha iyi sonuç vermez; salınım ve temas (contact) kuvveti artabilir. Önce [tek eklem deneyinde](../simulasyon/mujoco.md) hedefi değiştirip zaman cevabını incele.
 
-Bir `qpos` ataması simülasyonda robotu ışınlar. Bir aktüatör hedefi fizik motorunun kolu o hedefe götürmesini ister. IK sonucunu ekrana çizmek için ilkini, dinamik davranışı ve demonstrasyonu incelemek için ikincisini seçersin. Işınlanan “kavrama” fiziksel bir kavrama gösterimi değildir.
+Bir `qpos` ataması simülasyonda (simulation) robotu ışınlar. Bir aktüatör (actuator) hedefi fizik motorunun kolu o hedefe götürmesini ister. IK sonucunu ekrana çizmek için ilkini, dinamik davranışı ve demonstrasyonu incelemek için ikincisini seçersin. Işınlanan “kavrama” fiziksel bir kavrama gösterimi değildir.

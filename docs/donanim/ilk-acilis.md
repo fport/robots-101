@@ -6,7 +6,7 @@ Bu sayfa **donanım geldiğinde** uygulanır. Komutlar gerçek motor veri yolu i
 
 Verdiğin ürün sayfası kurulu/test edilmiş set tarif ediyor. Bu nedenle “kutuyu aç → bütün motor ID'lerini yeniden yaz” akışı uygun bir varsayım değil. Teslimatta motor ID'leri, baudrate, başlangıç pozu ve kalibrasyonun durumunu satıcı talimatından öğren. [Hashtag Robotics](https://labs.hashtagrobotics.tr/so-101-robot-kol)
 
-`lerobot-setup-motors` yeni/yeniden yapılandırılan motorların ID ve haberleşmesini ayarlar; kalibrasyon komutuyla aynı değildir. Resmî kurulum sıfır motorlar için motorları tek tek bağlama adımı içerir. Hazır zincirde bu işlemi gerekçesiz tekrarlama. [Resmî SO-101 kurulumu](https://huggingface.co/docs/lerobot/en/so101)
+`lerobot-setup-motors` yeni/yeniden yapılandırılan motorların ID ve haberleşmesini ayarlar; kalibrasyon (calibration) komutuyla aynı değildir. Resmî kurulum sıfır motorlar için motorları tek tek bağlama adımı içerir. Hazır zincirde bu işlemi gerekçesiz tekrarlama. [Resmî SO-101 kurulumu](https://huggingface.co/docs/lerobot/en/so101)
 
 ## 1. ML ortamını aç
 
@@ -29,9 +29,9 @@ Buradaki portlar örnektir; keşfettiğin gerçek değerlerle değiştir. Bu de�
 
 ## 2. Birim kararını sabitle
 
-Bu rehber gerçek veri örneklerinde **`use_degrees=false`** seçer: kol eklemleri LeRobot'un kalibrasyona bağlı normalize aralığında, tutucu ayrı 0–100 ölçeğinde temsil edilir. Leader ve follower'da aynı seçim yapılır. Denenen LeRobot 0.6.1'de `use_degrees` varsayılanı `true` olduğu için parametreyi açıkça veriyoruz.
+Bu rehber gerçek veri örneklerinde **`use_degrees=false`** seçer: kol eklemleri LeRobot'un kalibrasyona bağlı normalize aralığında, tutucu (gripper) ayrı 0–100 ölçeğinde temsil edilir. Leader ve follower'da aynı seçim yapılır. Denenen LeRobot 0.6.1'de `use_degrees` varsayılanı `true` olduğu için parametreyi açıkça veriyoruz.
 
-Bu seçim “normalize olan her şey fiziksel olarak aynı” anlamına gelmez. Kalibrasyon ve action sırası hâlâ gereklidir. Önceden derece ile toplanmış dataset/checkpoint kullanacaksan onun sözleşmesine uy; aynı veri setinde birimleri sessizce değiştirme. [LeRobot follower kaynak kodu](https://github.com/huggingface/lerobot/blob/v0.6.1/src/lerobot/robots/so_follower/so_follower.py)
+Bu seçim “normalize olan her şey fiziksel olarak aynı” anlamına gelmez. Kalibrasyon ve eylem (action) sırası hâlâ gereklidir. Önceden derece ile toplanmış veri kümesi (dataset)/kontrol noktası (checkpoint) kullanacaksan onun sözleşmesine uy; aynı veri setinde birimleri sessizce değiştirme. [LeRobot follower kaynak kodu](https://github.com/huggingface/lerobot/blob/v0.6.1/src/lerobot/robots/so_follower/so_follower.py)
 
 ## 3. Kalibrasyon
 
@@ -51,11 +51,11 @@ lerobot-calibrate \
   --teleop.use_degrees=false
 ```
 
-Terminalin gösterdiği poz/hareket aralığı adımlarını izle. Motoru mekanik sınırın ötesine zorlamak bir kalibrasyon yöntemi değildir. Kalibrasyon sonuç dosyası ve ID eşleşmesini yedekle; teleop, kayıt ve rollout boyunca aynı ID'leri kullan.
+Terminalin gösterdiği poz/hareket aralığı adımlarını izle. Motoru mekanik sınırın ötesine zorlamak bir kalibrasyon yöntemi değildir. Kalibrasyon sonuç dosyası ve ID eşleşmesini yedekle; teleop, kayıt ve politika yürütümü (rollout) boyunca aynı ID'leri kullan.
 
 ## 4. Kayıt öncesi kabul deneyi
 
-Önce küçük hareketlerle taban, omuz, dirsek, bilek ve tutucu yönlerini kontrol et. Leader hareket ettiğinde beklenen follower eklemi aynı anlamda hareket ediyor mu? Tutucu açılma yönü doğru mu? Eklem limitine yaklaşmadan geri dönebiliyor musun?
+Önce küçük hareketlerle taban, omuz, dirsek, bilek ve tutucu yönlerini kontrol et. Leader hareket ettiğinde beklenen follower eklemi aynı anlamda hareket ediyor mu? Tutucu açılma yönü doğru mu? Eklem (joint) limitine yaklaşmadan geri dönebiliyor musun?
 
 Portu iki ayrı süreç açmasın: bir yanda LeRobot teleop, diğer yanda Strands hardware bağlantısı aynı motor bus'ına sahip olmaya çalışmamalı. Tek süreç kontrolüyle başla.
 

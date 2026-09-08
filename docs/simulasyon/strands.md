@@ -27,7 +27,7 @@ finally:
 .venv/bin/python examples/02_strands_so101.py --render --steps 30
 ```
 
-Program SO-101'i yükler, küçük bir küp ve `front` kamera ekler, başlangıç state'ini okur, mock politika ile 30 kontrol adımı çalıştırır ve iki görüntü kaydeder. `outputs/so101_before.png` başlangıç, `outputs/so101_after.png` son durumdur.
+Program SO-101'i yükler, küçük bir küp ve `front` kamera ekler, başlangıç durum (state)'ini okur, mock politika (policy) ile 30 kontrol adımı çalıştırır ve iki görüntü kaydeder. `outputs/so101_before.png` başlangıç, `outputs/so101_after.png` son durumdur.
 
 Masaüstünde hareketi canlı izlemek için macOS'ta aşağıdaki komutu kullan. 900 kontrol adımı yaklaşık 30 saniyelik izleme penceresi verir; çıkışta pencere temizlenir. Linux masaüstünde `mjpython` yerine `python` kullanılır.
 
@@ -51,13 +51,13 @@ if result["status"] != "success":
     raise RuntimeError(result)
 ```
 
-İnsan için açıklama `content` içindeki `text`, makinece işlenecek alanlar `json` bloklarında olabilir. `get_robot_state` çıktısındaki eklem isimlerini not et. Test edilen SO-101 modelinde `1`–`6` adları döndü; gerçek LeRobot donanımında isimlerin aynı olduğunu varsayma.
+İnsan için açıklama `content` içindeki `text`, makinece işlenecek alanlar `json` bloklarında olabilir. `get_robot_state` çıktısındaki eklem (joint) isimlerini not et. Test edilen SO-101 modelinde `1`–`6` adları döndü; gerçek LeRobot donanımında isimlerin aynı olduğunu varsayma.
 
 ## Mock ne işe yarar?
 
-Mock politika arayüzün eylem üretip simülatöre aktarabildiğini sınar. Aşağıdaki sonuçları gösterebilir: model yüklendi, politika çağrıldı, eylem anahtarları çözüldü, fizik adımlandı, görüntü üretildi.
+Mock politika arayüzün eylem (action) üretip simülatöre aktarabildiğini sınar. Aşağıdaki sonuçları gösterebilir: model yüklendi, politika çağrıldı, eylem anahtarları çözüldü, fizik adımlandı, görüntü üretildi.
 
-Şunları göstermez: küp tanındı, kavrama planlandı, tutucu temas kurdu veya bir görev öğrenildi. `instruction="pick up the cube"` yazmak mock'u kavrama uzmanına dönüştürmez. `status="success"` çoğu kez API işleminin tamamlandığı anlamına gelir; görev başarısının ayrı ölçütü olmalıdır.
+Şunları göstermez: küp tanındı, kavrama planlandı, tutucu (gripper) temas (contact) kurdu veya bir görev öğrenildi. `instruction="pick up the cube"` yazmak mock'u kavrama uzmanına dönüştürmez. `status="success"` çoğu kez API işleminin tamamlandığı anlamına gelir; görev başarısının ayrı ölçütü olmalıdır.
 
 ## Kendin değiştir
 

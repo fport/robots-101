@@ -1,8 +1,8 @@
 # Veri mühendisliği: zaman, etiket ve bölme
 
-Bir Parquet dosyasının açılması eğitim verisinin doğru olduğu anlamına gelmez. Hangi görüntünün hangi eyleme eşlendiği, episode'un nerede bittiği ve test örneklerinin eğitimden gerçekten ayrı olup olmadığı modelin öğrendiği problemi belirler.
+Bir Parquet dosyasının açılması eğitim (training) verisinin doğru olduğu anlamına gelmez. Hangi görüntünün hangi eyleme eşlendiği, bölüm (episode)'un nerede bittiği ve test örneklerinin eğitimden gerçekten ayrı olup olmadığı modelin öğrendiği problemi belirler.
 
-Bu bölümde mevcut 3 episode/90 karelik smoke kaydını kullanarak action chunk çıkaracağız. Veri hattını öğrenmek için uygun; görev uzmanlığı içermediği için bu kayıttan kavrama başarısı beklenmez.
+Bu bölümde mevcut 3 episode/90 karelik smoke kaydını kullanarak eylem dizisi (action chunk) çıkaracağız. Veri hattını öğrenmek için uygun; görev uzmanlığı içermediği için bu kayıttan kavrama başarısı beklenmez.
 
 ## 1. Bir örneğin zaman sözleşmesi
 
@@ -14,7 +14,7 @@ a_t = bu gözleme dayanarak gönderilen eylem
 o_(t+1) = eylem uygulanıp zaman ilerledikten sonraki gözlem
 ```
 
-BC örneği `o_t → a_t` eşleşmesini öğrenir. `o_(t+1) → a_t` yazarsan modele karar anında henüz bulunmayan bilgi verebilirsin. Gözlemden önceki eylemi yazarsan da başka bir gecikme ilişkisi öğretirsin. Kayıt döngüsünde **okuma → karar → gönderme → kayıt** sırasını incelemek bu yüzden gerekir; dosya sütun adları bu ilişkiyi tek başına açıklamaz.
+BC örneği `o_t → a_t` eşleşmesini öğrenir. `o_(t+1) → a_t` yazarsan modele karar anında henüz bulunmayan bilgi verebilirsin. Gözlemden önceki eylemi yazarsan da başka bir gecikme (latency) ilişkisi öğretirsin. Kayıt döngüsünde **okuma → karar → gönderme → kayıt** sırasını incelemek bu yüzden gerekir; dosya sütun adları bu ilişkiyi tek başına açıklamaz.
 
 [Hedef takibi CSV'sinde](../simulasyon/denetleyici.md) bu ayrım açık: `q_before`, `command`, `q_after`. Gerçek teleop'ta leader isteği ile follower'a gerçekten gönderilen sınırlandırılmış komut farklı olabilir. Kayıtta hangisinin action olduğu belirtilmelidir. `max_relative_target` gibi sınırlama uygulanıyorsa öğrenme hedefini de bu farkı bilerek seç.
 
@@ -22,9 +22,9 @@ BC örneği `o_t → a_t` eşleşmesini öğrenir. `o_(t+1) → a_t` yazarsan mo
 
 Kontrol 30 Hz ise bir adım yaklaşık 33.3 ms'dir. Kamera içeriği karardan 100 ms daha eskiyse model yaklaşık üç adım gerideki sahneyi görür. Uç 0.10 m/s hareket ederken bu aralıkta 1 cm yol alır. Küçük bir nesnede bu fark kapanış zamanını etkileyebilir.
 
-Her kameranın yakalama zamanı, son frame'in okunma zamanı, eklem okuma zamanı ve komut gönderme zamanını ayrı ölçmek ideal başlangıçtır. İki kamera da “30 FPS” yazıyor diye aynı anda pozlandıklarını varsayma. USB ve video kuyrukları eski frame döndürebilir.
+Her kameranın yakalama zamanı, son kare (frame)'in okunma zamanı, eklem (joint) okuma zamanı ve komut gönderme zamanını ayrı ölçmek ideal başlangıçtır. İki kamera da “30 FPS” yazıyor diye aynı anda pozlandıklarını varsayma. USB ve video kuyrukları eski frame döndürebilir.
 
-İlk pratik kontrol: tutucuyu yavaşça aç-kapat; görüntüdeki kapanışla state/action izlerini birlikte incele. Ölçmeden bütün veri setini üç kare kaydırma. Gecikme değişkense sabit kaydırma her örneği düzeltmez; önce kayıt hattını iyileştirmek gerekir.
+İlk pratik kontrol: tutucuyu yavaşça aç-kapat; görüntüdeki kapanışla durum (state)/action izlerini birlikte incele. Ölçmeden bütün veri setini (dataset) üç kare kaydırma. Gecikme değişkense sabit kaydırma her örneği düzeltmez; önce kayıt hattını iyileştirmek gerekir.
 
 ## 3. Hedef konum, delta ve sonraki konum
 
@@ -38,11 +38,11 @@ Varsayalım mevcut ölçüm `q_t=0.10 rad`, gönderilen hedef `a_t=0.16 rad`, so
 
 Bu üç etiketten hangisini öğreniyorsan runtime da aynı tanımı uygulamalıdır. “Altı sayı çıkıyor” kontrolü birim ve anlam uyuşmazlığını yakalayamaz. Dataset kartına joint sırası, birim, referans ve gripper aralığı ekle.
 
-Normalizasyon bunun üstüne eklenen sayısal dönüşümdür. Örneğin ortalama `μ=0.10`, standart sapma `σ=0.05` ise mutlak hedef `0.16` model uzayında `(0.16−0.10)/0.05=1.2` olur. Model çıktısı `1.2` radyan diye gönderilmez; önce uygun istatistikle geri dönüştürülür. Normalizasyon, yanlış robot birimini fiziksel olarak düzeltmez.
+Normalizasyon (normalization) bunun üstüne eklenen sayısal dönüşümdür. Örneğin ortalama `μ=0.10`, standart sapma `σ=0.05` ise mutlak hedef `0.16` model uzayında `(0.16−0.10)/0.05=1.2` olur. Model çıktısı `1.2` radyan diye gönderilmez; önce uygun istatistikle geri dönüştürülür. Normalizasyon, yanlış robot birimini fiziksel olarak düzeltmez.
 
 ## 4. Tek eylemden action chunk'a
 
-SmolVLA'nın bu tarifteki ufku `H=50`. `t` anındaki gözlem için etiket:
+SmolVLA'nın bu tarifteki ufku `H=50`. `t` anındaki gözlem (observation) için etiket:
 
 ```text
 [a_t, a_(t+1), ..., a_(t+49)]
@@ -50,7 +50,7 @@ SmolVLA'nın bu tarifteki ufku `H=50`. `t` anındaki gözlem için etiket:
 
 30 Hz'de ilk-son etiketin zaman farkı `49/30 ≈ 1.633 s`; 50 komutun sırayla yürütüldüğü süre `50/30 ≈ 1.667 s`. “Ufuk süresi” derken bu iki tanımdan hangisini kullandığını belirt.
 
-Episode'da yalnız 30 frame varsa ilk gözlem için bile 50 gerçek gelecek eylem yok. LeRobot okuyucusu episode dışındaki indeksleri sınırdaki örneğe kırpar ve padding maskesi üretir. Böylece sonraki episode'dan eylem taşınmaz. [LeRobot dataset reader](https://github.com/huggingface/lerobot/blob/2774d9bddcbbda50e697e162e89e7eaada8d7105/src/lerobot/datasets/dataset_reader.py)
+Episode'da yalnız 30 frame varsa ilk gözlem için bile 50 gerçek gelecek eylem yok. LeRobot okuyucusu episode dışındaki indeksleri sınırdaki örneğe kırpar ve doldurma (padding) maskesi üretir. Böylece sonraki episode'dan eylem taşınmaz. [LeRobot dataset reader](https://github.com/huggingface/lerobot/blob/2774d9bddcbbda50e697e162e89e7eaada8d7105/src/lerobot/datasets/dataset_reader.py)
 
 ## 5. Padding'i elle hesapla
 
@@ -63,7 +63,7 @@ Uzunluğu 4 olan bir episode ve `H=3`:
 | 2 | a2, a3, a3 | false, false, true |
 | 3 | a3, a3, a3 | false, true, true |
 
-Son eylemin tekrar görünmesi üç yeni gösterim olduğu anlamına gelmez. Masked kopyalar tensör şeklinin sabit kalmasını sağlar. `true` burada **geçerli** değil, **padding** demektir; ters yorumlamak en faydalı veriyi loss'tan çıkartır.
+Son eylemin tekrar görünmesi üç yeni gösterim (demonstration) olduğu anlamına gelmez. Masked kopyalar tensör (tensor) şeklinin sabit kalmasını sağlar. `true` burada **geçerli** değil, **padding** demektir; ters yorumlamak en faydalı veriyi loss'tan çıkartır.
 
 Bizim 30 frame'lik episode ve 50 adımlık ufukta gerçek etiket sayısı başlangıçlara göre `30+29+...+1=465`. Toplam yuva `30×50=1500`; `1035/1500=%69` padding. Üç aynı uzunlukta episode oranı değiştirmez.
 
@@ -99,7 +99,7 @@ Script küçük veri setlerini belleğe alır. Normal çalışmada yalnız Parqu
 
 ## 7. Loss'ta doğru payda
 
-Maskeyi hatayla çarpıp sonra bütün tensör boyutuna bölmek, çok padding olan batch'in loss'unu yapay biçimde küçültür. Geçerli zaman ve eylem boyutlarını saymalısın.
+Maskeyi hatayla çarpıp sonra bütün tensör boyutuna bölmek, çok padding olan örnek grubu (batch)'in loss'unu yapay biçimde küçültür. Geçerli zaman ve eylem boyutlarını saymalısın.
 
 ```text
 loss = geçerli boyutlardaki kare hata toplamı
@@ -116,7 +116,7 @@ Daha kuvvetli test için grup tanımla: kayıt günü, nesne örneği, başlang�
 
 Örnek: 100 episode'un 70'i eğitim, 15'i model seçimi, 15'i son test. Sayılar önerilen evrensel oran değil, işleyiş örneğidir. Model ayarını 15 son test episode'una bakarak değiştirirsen o grup artık bağımsız son test değildir. `--dataset.eval_split` otomatik olarak gün/nesne bazlı ayrım kurmaz; araştırma iddiana uygun gruplamayı ayrıca tasarlamalısın.
 
-Normalizasyon istatistikleri ideal olarak eğitim bölümünden hesaplanır. Dataset metadata'sındaki mevcut istatistiklerin hangi kapsamdan üretildiğini incele; hazır split bayrağının istatistikleri yeniden hesapladığını varsayma. Daha sıkı değerlendirmede eğitim bölümü ve preprocessing istatistikleri ayrıca sürümlenir.
+Normalizasyon istatistikleri ideal olarak eğitim bölümünden hesaplanır. Dataset üstveri (metadata)'sındaki mevcut istatistiklerin hangi kapsamdan üretildiğini incele; hazır split bayrağının istatistikleri yeniden hesapladığını varsayma. Daha sıkı değerlendirmede eğitim bölümü ve preprocessing istatistikleri ayrıca sürümlenir.
 
 ## 9. Veri çeşitliliği ile veri hacmi
 

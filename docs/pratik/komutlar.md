@@ -37,7 +37,7 @@ Mevcut root'a yeniden yazılmaz. Yeni denemede başka klasör seç.
 .venv/bin/python examples/07_toy_behavior_cloning.py --output outputs/toy-run-02
 ```
 
-Bu gerçek bir küçük eğitim deneyidir, SO-101/VLA modeli değildir.
+Bu gerçek bir küçük eğitim (training) deneyidir, SO-101/VLA modeli değildir.
 
 ## SmolVLA komutu üret
 

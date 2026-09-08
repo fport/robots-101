@@ -1,6 +1,6 @@
 # GPU ve bulut çalışma düzeni
 
-Robotun yanında Mac kullanıp eğitimi başka bilgisayarda yapabilirsin. Veri toplama makinesi ile eğitim makinesini ayırmak robotun sürekli ağa bağlı kontrol edilmesini gerektirmez; eğitimden sonra checkpoint'i geri getirirsin.
+Robotun yanında Mac kullanıp eğitimi başka bilgisayarda yapabilirsin. Veri toplama makinesi ile eğitim (training) makinesini ayırmak robotun sürekli ağa bağlı kontrol edilmesini gerektirmez; eğitimden sonra kontrol noktası (checkpoint)'i geri getirirsin.
 
 ## İşleri bilgisayarlara dağıt
 
@@ -9,11 +9,11 @@ Robotun yanında Mac kullanıp eğitimi başka bilgisayarda yapabilirsin. Veri t
 | MkDocs, küçük Python alıştırmaları | Uygun başlangıç | Gerekmez |
 | Tek SO-101 MuJoCo fizik sim | Çalıştırıldı | Yapılabilir |
 | Kamera/veri kaydı | USB/codec uyumuna bağlı | Yapılabilir |
-| Küçük NumPy taklit öğrenme | Çalıştırılabilir | Gerekmez |
-| SmolVLA fine-tuning | CPU yavaş; MPS ayrıca sınanmalı | Ana eğitim tarifi |
-| Gerçek zamanlı VLA | Gecikme/bellek ölçülmeli | Cihaz/model/ayarına bağlı |
+| Küçük NumPy taklit öğrenme (imitation learning) | Çalıştırılabilir | Gerekmez |
+| SmolVLA ince ayar (fine-tuning) | CPU yavaş; MPS ayrıca sınanmalı | Ana eğitim tarifi |
+| Gerçek zamanlı VLA | Gecikme (latency)/bellek ölçülmeli | Cihaz/model/ayarına bağlı |
 
-Kesin VRAM gereksinimi sabit değildir: batch, görüntü sayısı/boyutu, hassasiyet, eğitilen katmanlar ve optimizer etkiler. Önce batch 1 ile bellek ölç; sonra artır. “450M parametre” toplam eğitim belleğini hesaplamak için tek başına yeterli değildir. [LeRobot hesaplama rehberi](https://huggingface.co/docs/lerobot/en/hardware_guide)
+Kesin VRAM gereksinimi sabit değildir: örnek grubu (batch), görüntü sayısı/boyutu, hassasiyet, eğitilen katmanlar ve eniyileyici (optimizer) etkiler. Önce batch 1 ile bellek ölç; sonra artır. “450M parametre” toplam eğitim belleğini hesaplamak için tek başına yeterli değildir. [LeRobot hesaplama rehberi](https://huggingface.co/docs/lerobot/en/hardware_guide)
 
 ## CUDA kurulum sırası
 
@@ -37,9 +37,9 @@ Bu Mac'te sistem FFmpeg bulunmadığı için TorchCodec yüklenemedi; LeRobot Py
 
 ## Yerel veriyi eğitim sunucusuna taşı
 
-1. Robot makinesinde kaydı sonlandır ve dataset denetimini çalıştır.
+1. Robot makinesinde kaydı sonlandır ve veri kümesi (dataset) denetimini çalıştır.
 2. Veri kökünü `meta`, `data`, `videos` birlikte olacak şekilde paketle/aktar.
-3. Eğitim makinesinde aynı denetimi ve bir frame okuma deneyini çalıştır.
+3. Eğitim makinesinde aynı denetimi ve bir kare (frame) okuma deneyini çalıştır.
 4. Eğitim komutunu o makinedeki yollarla yeniden üret.
 5. Sonuçta checkpoint, komut, sürüm dökümü ve değerlendirme notlarını geri al.
 

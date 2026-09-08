@@ -1,12 +1,16 @@
-:root { --md-primary-fg-color: #163d3b; --md-accent-fg-color: #1b9a80; }
-[data-md-color-scheme="slate"] { --md-default-bg-color: #111b20; --md-default-fg-color: #e1e8e7; --md-default-fg-color--light: #a4bab8; --md-code-bg-color: #0c1418; --md-accent-fg-color: #73edd0; --md-typeset-a-color: #73edd0; }
+:root { --neon: #b6ff00; --md-primary-fg-color: #18210d; --md-primary-bg-color: #f3f8eb; --md-accent-fg-color: #426b00; }
+[data-md-color-scheme="slate"] { --md-default-bg-color: #10130c; --md-default-fg-color: #edf4e4; --md-default-fg-color--light: #b3bfa4; --md-code-bg-color: #080c05; --md-accent-fg-color: #b6ff00; --md-typeset-a-color: #b6ff00; }
+[data-md-color-scheme="default"] { --md-default-bg-color: #fafcf5; --md-default-fg-color: #202817; --md-typeset-a-color: #385d00; --md-accent-fg-color: #426b00; --md-code-bg-color: #edf2e3; }
 body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
 .md-typeset { font-size: .82rem; line-height: 1.8; }
 .md-typeset h1 { font-weight: 750; letter-spacing: -.035em; color: var(--md-default-fg-color); }
 .md-typeset h2 { font-weight: 680; letter-spacing: -.02em; margin-top: 2em; }
 .md-typeset code { border-radius: .25rem; }
-.md-header { box-shadow: none; border-bottom: 1px solid #ffffff15; }
-.md-tabs { background: #163d3b; }
+.md-header { box-shadow: none; border-bottom: 1px solid #b6ff0033; }
+.md-tabs { background: #18210d; }
+.md-typeset .md-button--primary { background: var(--neon); border-color: var(--neon); color: #172000; }
+.md-typeset .md-button--primary:hover { background: #ccff55; border-color: #ccff55; color: #172000; }
+.md-typeset a:focus-visible, .md-typeset button:focus-visible, .md-typeset input:focus-visible { outline: 2px solid var(--md-typeset-a-color); outline-offset: 3px; }
 .hero { padding: 2rem 0 1.3rem; }
 .hero .eyebrow { color: var(--md-accent-fg-color); text-transform: uppercase; font-weight: 700; font-size: .68rem; letter-spacing: .17em; }
 .hero h1 { max-width: 760px; font-size: clamp(2.3rem, 5vw, 3.5rem); line-height: 1.1; margin: .55rem 0 1rem; }
@@ -14,23 +18,35 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
 .hero-actions { display: flex; gap: .65rem; flex-wrap: wrap; margin: 1.2rem 0; }
 .md-typeset .md-button { border-radius: .4rem; padding: .55em 1.15em; font-size: .75rem; }
 .md-typeset .md-button:not(.md-button--primary) { color: var(--md-typeset-a-color); border-color: var(--md-typeset-a-color); }
-.hero-art { border-radius: .6rem; border: 1px solid #748b8933; width: 100%; margin: .7rem 0; }
+.hero-art { border-radius: .6rem; border: 1px solid #84976933; width: 100%; margin: .7rem 0; }
 .route-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(210px,1fr)); gap: .8rem; margin: 1.2rem 0; }
-.route-card { border: 1px solid #748b8944; border-radius: .6rem; padding: 1.1rem; background: #748b8908; }
+.route-card { border: 1px solid #84976944; border-radius: .6rem; padding: 1.1rem; background: #84976908; }
 .route-card .number { font-family: monospace; color: var(--md-accent-fg-color); font-size: .7rem; }
 .route-card h3 { margin: .5rem 0; }
 .route-card p { margin: .4rem 0; font-size: .75rem; }
 .route-card a { font-weight: 650; }
-.lab-panel { border: 1px solid #748b8955; border-radius: .7rem; padding: 1.25rem; margin: 1rem 0; }
-.lab-panel svg { width: 100%; max-height: 350px; background: #102127; border-radius: .5rem; }
+.lab-panel { border: 1px solid #84976955; border-radius: .7rem; padding: 1.25rem; margin: 1rem 0; }
+.lab-panel svg { width: 100%; max-height: 350px; background: #17200e; border-radius: .5rem; }
 .lab-controls { display: grid; gap: .85rem; grid-template-columns: repeat(auto-fit,minmax(200px,1fr)); }
 .lab-controls label { display: flex; flex-direction: column; gap: .25rem; font-weight: 600; font-size: .76rem; }
 .lab-controls input[type=range] { width: 100%; accent-color: var(--md-accent-fg-color); }
-.lab-controls input[type=number] { width: 100%; border: 1px solid #748b8977; border-radius: .3rem; padding: .45rem; color: var(--md-default-fg-color); background: var(--md-default-bg-color); font: inherit; }
-.lab-result { font-family: monospace; font-size: .77rem; background: #748b8915; padding: .75rem; border-radius: .4rem; margin-top: 1rem; }
+.lab-controls input[type=number] { width: 100%; border: 1px solid #84976977; border-radius: .3rem; padding: .45rem; color: var(--md-default-fg-color); background: var(--md-default-bg-color); font: inherit; }
+.lab-result { font-family: monospace; font-size: .77rem; background: #84976915; padding: .75rem; border-radius: .4rem; margin-top: 1rem; }
 .progress-list label { display: flex; gap: .65rem; align-items: start; margin: .65rem 0; cursor: pointer; }
 .progress-list input { margin-top: .45rem; accent-color: var(--md-accent-fg-color); }
-.progress-list button, .lab-panel button { padding: .45rem .8rem; border-radius: .35rem; border: 1px solid #748b8966; cursor: pointer; color: var(--md-default-fg-color); background: #748b8915; font: inherit; }
+.progress-list button, .lab-panel button { padding: .45rem .8rem; border-radius: .35rem; border: 1px solid #84976966; cursor: pointer; color: var(--md-default-fg-color); background: #84976915; font: inherit; }
 .progress-list progress { width: 100%; accent-color: var(--md-accent-fg-color); }
 .quiet { color: var(--md-default-fg-color--light); font-size: .73rem; }
 @media (max-width: 600px) { .hero { padding-top: .5rem; } .lab-panel { padding: .7rem; } }
+
+.md-typeset :is(.admonition, details):is(.tip, .success) { border-color: var(--md-typeset-a-color); }
+.md-typeset :is(.tip, .success) > :is(.admonition-title, summary) { background-color: #b6ff0010; }
+.md-typeset :is(.tip, .success) > :is(.admonition-title, summary)::before { background-color: var(--md-typeset-a-color); }
+
+.md-typeset figure.diagram { display: block; width: 100%; max-width: 100%; margin: 1.5rem 0; text-align: start; }
+.diagram-canvas { overflow-x: auto; max-width: 100%; padding: 1rem; border: 1px solid #84976955; border-radius: .6rem; background: var(--md-default-bg-color); scrollbar-color: var(--md-typeset-a-color) transparent; }
+.diagram-canvas svg { display: block; margin-inline: auto; user-select: text; }
+.diagram-canvas:focus-visible { outline: 2px solid var(--md-typeset-a-color); outline-offset: 3px; }
+.md-typeset .diagram-hint { max-width: none; margin: .5rem 0 0; color: var(--md-default-fg-color--light); font-size: .68rem; }
+.diagram-error { color: var(--md-default-fg-color); }
+@media (max-width: 600px) { .diagram-canvas { padding: .55rem; } }
