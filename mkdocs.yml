@@ -1,4 +1,5 @@
 site_name: SO-101 Atölyesi
+site_url: https://fport.github.io/robots-101/
 site_description: Sıfırdan robotik. MuJoCo, Strands Robots, LeRobot ve SmolVLA ile Türkçe ve İngilizce uygulamalı atölye.
 site_author: SO-101 Atölyesi
 docs_dir: docs

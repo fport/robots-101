@@ -8,6 +8,8 @@ A hands-on robotics workshop that takes you from your first joint and physics ex
 
 The repository includes a MkDocs Material guide, an interactive browser lab, runnable MuJoCo scenes, and 17 Python examples covering simulation, LeRobot data workflows, behavior cloning, ACT, and SmolVLA training preparation.
 
+**Read online:** [Türkçe](https://fport.github.io/robots-101/) · [English](https://fport.github.io/robots-101/en/)
+
 [Start from zero](docs/basla/sifirdan.en.md) · [Learning route](docs/basla/rota.en.md) · [Installation](docs/basla/kurulum.en.md) · [Validation record](docs/basla/dogrulama.en.md)
 
 ## What you can do
@@ -169,6 +171,12 @@ constraints-*.txt      Machine-specific dependency snapshots
 ```
 
 Generated datasets go in `data/`, experiment results in `outputs/`, caches in `.cache/`, and the built documentation in `site/`. These directories are excluded from version control.
+
+## GitHub Pages
+
+[The Pages workflow](.github/workflows/pages.yml) checks the documentation, builds both languages and publishes `site/` on every push to `main`. It can also be started manually from the repository's Actions tab. In Settings → Pages, the publishing source must be **GitHub Actions**. The `site_url` in `mkdocs.yml` matches the published `/robots-101/` path; update it if the repository or domain changes.
+
+Deployment installs only `requirements-docs.txt`. Simulation, datasets and model training run in the local environments described above.
 
 ## Checks and current scope
 
