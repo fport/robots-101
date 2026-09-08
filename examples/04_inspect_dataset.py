@@ -25,6 +25,10 @@ def inspect_dataset(root: Path, expected_episodes=None):
         for key in ("observation.state", "action"):
             values = np.asarray(row[key], dtype=float)
             expected_shape = tuple(info["features"][key]["shape"])
+            # LeRobot stores length-one numeric features as Parquet scalars.
+            # Accept that storage form only for a declared length-one feature.
+            if expected_shape == (1,) and values.shape == ():
+                values = values.reshape(1)
             if values.shape != expected_shape or not np.isfinite(values).all():
                 errors.append(f"episode {row['episode_index']} frame {row['frame_index']}: {key} şekil/NaN hatası")
     for index, frames in groups.items():

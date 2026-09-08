@@ -85,6 +85,26 @@ class EvaluationTests(unittest.TestCase):
 
 @unittest.skipUnless(importlib.util.find_spec("pyarrow"), "Parquet testleri ML ortamında")
 class DatasetIntegrityTests(unittest.TestCase):
+    def test_lerobot_scalar_storage_only_matches_length_one_feature(self):
+        import pyarrow as pa
+        import pyarrow.parquet as pq
+        inspect_dataset = runpy.run_path(str(ROOT / "examples/04_inspect_dataset.py"))["inspect_dataset"]
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / "meta").mkdir()
+            (root / "data").mkdir()
+            info = metadata()
+            info.update(total_episodes=1, total_frames=1)
+            info["features"]["action"]["shape"] = [1]
+            row = {"episode_index": 0, "frame_index": 0, "timestamp": 0.,
+                   "observation.state": [0.]*6, "action": .2}
+            pq.write_table(pa.Table.from_pylist([row]), root / "data/test.parquet")
+            (root / "meta/info.json").write_text(json.dumps(info))
+            self.assertEqual(inspect_dataset(root)["errors"], [])
+            info["features"]["action"]["shape"] = [6]
+            (root / "meta/info.json").write_text(json.dumps(info))
+            self.assertEqual(len(inspect_dataset(root)["errors"]), 1)
+
     def test_corrupt_timestamp_and_shape_are_detected(self):
         import pyarrow as pa
         import pyarrow.parquet as pq
